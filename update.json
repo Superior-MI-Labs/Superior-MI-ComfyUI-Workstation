@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "version": "3.0.2",
+  "version": "3.0.3",
   "channel": "development",
   "status": "pre-release qualification",
   "repo_url": "https://github.com/Superior-MI-Labs/Superior-MI-ComfyUI-Workstation",
@@ -8,8 +8,8 @@
   "deb_url": "",
   "zip_url": "",
   "sha256": {
-    "deb": "6e010f5d01494d4c76cf47666cf778a7645d63972609b1009bb4fcf467f82d38",
-    "zip": "f47c6ab274fc71cc3991b3994b9b902338b5218ae73d9dbc82e7245a3fd3bfe3"
+    "deb": "8d467dd1b8465cfd8fa67b057a14929a0b754ac65cb914b1076644f9bae655de",
+    "zip": "196b05808f67a0b16a953261192150e3beeb79eb28a9bc8437a2679c2e9b028f"
   },
-  "notes": "3.0.2 fixes the WolfCat Library crash caused by GTK widget double-parenting. Binary package URLs remain unpublished until qualification is complete."
+  "notes": "3.0.3 fixes Qwen Image 2.1 V3 Autogrow reference inputs and makes Create controls derive from the selected Blueprint graph. Runtime inputs are preflighted against local /object_info before queueing. Binary package URLs remain unpublished until qualification is complete."
 }
