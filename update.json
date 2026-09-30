@@ -1,14 +1,15 @@
 {
   "schema": 1,
-  "version": "3.0.1",
+  "version": "3.0.2",
   "channel": "development",
   "status": "pre-release qualification",
   "repo_url": "https://github.com/Superior-MI-Labs/Superior-MI-ComfyUI-Workstation",
+  "source_url": "https://github.com/Superior-MI-Labs/Superior-MI-ComfyUI-Workstation/archive/refs/heads/main.zip",
   "deb_url": "",
   "zip_url": "",
   "sha256": {
-    "deb": "",
-    "zip": ""
+    "deb": "6e010f5d01494d4c76cf47666cf778a7645d63972609b1009bb4fcf467f82d38",
+    "zip": "f47c6ab274fc71cc3991b3994b9b902338b5218ae73d9dbc82e7245a3fd3bfe3"
   },
-  "notes": "Development channel. No public package is published from GitHub yet. Official releases begin after WolfCat qualification."
+  "notes": "3.0.2 fixes the WolfCat Library crash caused by GTK widget double-parenting. Binary package URLs remain unpublished until qualification is complete."
 }
