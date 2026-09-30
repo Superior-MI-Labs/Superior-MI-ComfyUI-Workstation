@@ -1,0 +1,14 @@
+{
+  "schema": 1,
+  "version": "3.0.1",
+  "channel": "development",
+  "status": "pre-release qualification",
+  "repo_url": "https://github.com/Superior-MI-Labs/Superior-MI-ComfyUI-Workstation",
+  "deb_url": "",
+  "zip_url": "",
+  "sha256": {
+    "deb": "",
+    "zip": ""
+  },
+  "notes": "Development channel. No public package is published from GitHub yet. Official releases begin after WolfCat qualification."
+}
