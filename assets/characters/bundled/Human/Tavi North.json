@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "id": "tavi-north",
+  "name": "Tavi North",
+  "collection": "Superior MI Characters",
+  "kind": "Human",
+  "role": "Interface Strategist",
+  "identity": "trans man",
+  "pronouns": "he/they",
+  "body_type": "slender",
+  "description": "Tavi North, a human character in the Superior MI Labs reference-character starter collection.",
+  "tags": [
+    "human",
+    "trans",
+    "interface",
+    "strategy"
+  ],
+  "reference_type": "character-sheet",
+  "license": "Bundled with Superior MI Labs ComfyUI Workstation for use as a local reference asset."
+}

@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "id": "maren-bell",
+  "name": "Maren Bell",
+  "collection": "Superior MI Characters",
+  "kind": "Human",
+  "role": "Community Operations Lead",
+  "identity": "woman",
+  "pronouns": "she/her",
+  "body_type": "curvy",
+  "description": "Maren Bell, a human character in the Superior MI Labs reference-character starter collection.",
+  "tags": [
+    "human",
+    "community",
+    "operations"
+  ],
+  "reference_type": "character-sheet",
+  "license": "Bundled with Superior MI Labs ComfyUI Workstation for use as a local reference asset."
+}

@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "id": "lumi-drift",
+  "name": "Lumi Drift",
+  "collection": "Superior MI Characters",
+  "kind": "Furry",
+  "role": "Polar Communications Guide",
+  "identity": "woman",
+  "pronouns": "she/her",
+  "body_type": "soft athletic",
+  "description": "Lumi Drift, a furry character in the Superior MI Labs reference-character starter collection.",
+  "species": "arctic fox",
+  "tags": [
+    "furry",
+    "arctic fox",
+    "communications",
+    "guide"
+  ],
+  "reference_type": "character-sheet",
+  "license": "Bundled with Superior MI Labs ComfyUI Workstation for use as a local reference asset."
+}

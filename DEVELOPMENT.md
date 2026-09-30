@@ -1,26 +1,43 @@
-# Development Qualification
+# Development Status
 
-This repository is intentionally pre-release.
+Current public-beta line: **v3.0.3 / beta.1**
 
-## Candidate
+This repository is intentionally being released as a public beta before the major GUI and Blueprint-library redesign.
 
-**3.0.2**
+## Qualified in the current beta
 
-## Current regression
+- Normal startup and Safe Mode
+- Qwen Image 2.1 character/reference creation
+- FLUX.2 Klein image creation path
+- Wan2.2 image-to-video setup path
+- Live Create progress and output preview
+- Blueprint-to-ComfyUI graph handoff
+- Expandable Character Library
+- Lazy-loaded Library/Activity/Advanced surfaces
+- Runtime input-contract validation against ComfyUI `/object_info`
+- Update checker and development-source sync
+- 22/22 automated tests in the v3.0.3 qualification pass
 
-WolfCat exposed a deterministic crash when opening Library in 3.0.1.
+## Planned next
 
-Cause:
+The next major work is product polish rather than piling on more tabs:
 
-```text
-right_sc.add(right)
-paned.pack2(right, ...)
-```
+1. Major GUI/visual hierarchy overhaul.
+2. More visual Blueprint and template cards with input/output previews.
+3. Stronger Starter Pack guidance and dependency visualization.
+4. Better workflow capability discovery from the live ComfyUI graph contract.
+5. Expanded image/video/audio model families.
+6. Windows and macOS platform adapters.
+7. Public bug reports, qualification evidence, and repeatable release automation.
 
-The same GTK widget was attached to two parents. GTK widgets have a single-parent ownership contract.
+## Architecture direction
 
-3.0.2 changes the paned child to the scrolled container and adds a static parent-ownership regression test. Nested Library, Activity, and Advanced pages also lazy-load so unrelated feature pages are not constructed simply by opening another section.
+Keep one authority per domain:
 
-## Release gate
+- Blueprints define creation recipes.
+- Packs define model/component dependencies.
+- Characters provide reusable identity/reference inputs.
+- ComfyUI remains the canonical execution graph/runtime.
+- The Workstation provides orchestration, onboarding, validation, and visibility.
 
-Do not create an official release until the candidate is exercised on the target Linux Mint workstation, including Create, Blueprints, Starter Packs, Characters, Activity, updater checks, and ComfyUI bridge behavior.
+Do not create parallel rendering pipelines simply to make the GUI easier.

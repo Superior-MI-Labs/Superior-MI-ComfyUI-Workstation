@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "id": "sage-park",
+  "name": "Sage Park",
+  "collection": "Superior MI Characters",
+  "kind": "Human",
+  "role": "Workflow Curator",
+  "identity": "trans woman",
+  "pronouns": "she/her",
+  "body_type": "slender",
+  "description": "Sage Park, a human character in the Superior MI Labs reference-character starter collection.",
+  "tags": [
+    "human",
+    "trans",
+    "workflow",
+    "curator"
+  ],
+  "reference_type": "character-sheet",
+  "license": "Bundled with Superior MI Labs ComfyUI Workstation for use as a local reference asset."
+}

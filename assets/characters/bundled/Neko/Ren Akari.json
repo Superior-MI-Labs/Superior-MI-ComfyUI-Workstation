@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "id": "ren-akari",
+  "name": "Ren Akari",
+  "collection": "Superior MI Characters",
+  "kind": "Neko",
+  "role": "Security and Reliability Specialist",
+  "identity": "man",
+  "pronouns": "he/him",
+  "body_type": "athletic",
+  "description": "Ren Akari, a neko character in the Superior MI Labs reference-character starter collection.",
+  "tags": [
+    "neko",
+    "security",
+    "reliability"
+  ],
+  "reference_type": "character-sheet",
+  "license": "Bundled with Superior MI Labs ComfyUI Workstation for use as a local reference asset."
+}

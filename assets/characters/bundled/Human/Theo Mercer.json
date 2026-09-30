@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "id": "theo-mercer",
+  "name": "Theo Mercer",
+  "collection": "Superior MI Characters",
+  "kind": "Human",
+  "role": "Build and Fabrication Specialist",
+  "identity": "man",
+  "pronouns": "he/him",
+  "body_type": "lean athletic",
+  "description": "Theo Mercer, a human character in the Superior MI Labs reference-character starter collection.",
+  "tags": [
+    "human",
+    "maker",
+    "fabrication"
+  ],
+  "reference_type": "character-sheet",
+  "license": "Bundled with Superior MI Labs ComfyUI Workstation for use as a local reference asset."
+}

@@ -1,0 +1,448 @@
+{
+  "version": "2026-09-30-v2",
+  "stacks": [
+    {
+      "id": "flux2-klein-4b-fast",
+      "title": "FLUX.2 Klein 4B Fast Image Stack",
+      "type": "Image",
+      "tier": "8\u201312 GB",
+      "vram_min": 8,
+      "vram_target": 12,
+      "status": "Recommended",
+      "description": "Fast local image generation and editing. Strong first stack for lower VRAM cards; Apache-2.0 FLUX.2 Klein FP8 plus the compact FLUX2 text encoder and VAE.",
+      "source_url": "https://huggingface.co/black-forest-labs/FLUX.2-klein-4b-fp8",
+      "license_note": "FLUX.2 Klein 4B FP8 is Apache-2.0. Check every component's repository terms before redistribution.",
+      "canonical_base": "Image/FLUX.2-Klein-4B",
+      "assets": [
+        {
+          "repo": "black-forest-labs/FLUX.2-klein-4b-fp8",
+          "file": "flux-2-klein-4b-fp8.safetensors",
+          "target": "diffusion_models"
+        },
+        {
+          "repo": "Comfy-Org/vae-text-encorder-for-flux-klein-4b",
+          "file": "split_files/text_encoders/qwen_3_4b_fp4_flux2.safetensors",
+          "target": "text_encoders"
+        },
+        {
+          "repo": "Comfy-Org/vae-text-encorder-for-flux-klein-4b",
+          "file": "split_files/vae/flux2-vae.safetensors",
+          "target": "vae"
+        }
+      ],
+      "workflow_urls": [
+        "https://raw.githubusercontent.com/Comfy-Org/workflow_templates/main/templates/image_flux2_klein_text_to_image.json",
+        "https://raw.githubusercontent.com/Comfy-Org/workflow_templates/main/templates/image_flux2_klein_image_edit_4b_distilled.json"
+      ],
+      "approx_download_gb": 9,
+      "readiness": [
+        "~13 GB VRAM native target; lower resolutions/offload can reduce pressure"
+      ]
+    },
+    {
+      "id": "qwen-image-2.1-convrot",
+      "title": "Qwen Image 2.1 ConvRot Creator Stack",
+      "type": "Image + References",
+      "tier": "12\u201316 GB",
+      "vram_min": 12,
+      "vram_target": 16,
+      "status": "Recommended",
+      "description": "Strong text, image editing, and multi-reference character workflows. Uses the current Comfy-Org ConvRot path and native Qwen Image 2.1 nodes.",
+      "source_url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
+      "license_note": "Qwen Image 2.1 uses the Qwen research license. Review terms for your use case.",
+      "canonical_base": "Image/Qwen-Image-2.1",
+      "assets": [
+        {
+          "repo": "Comfy-Org/Qwen-Image-2.1",
+          "file": "diffusion_models/qwen_image_2.1_int8_convrot.safetensors",
+          "target": "diffusion_models"
+        },
+        {
+          "repo": "Comfy-Org/Qwen-Image-2.1",
+          "file": "text_encoders/qwen3vl_8b_int8_convrot.safetensors",
+          "target": "text_encoders"
+        },
+        {
+          "repo": "Comfy-Org/Qwen-Image-2.1",
+          "file": "vae/qwen_image_2.1_vae_bf16.safetensors",
+          "target": "vae"
+        }
+      ],
+      "workflow_urls": [
+        "https://raw.githubusercontent.com/Comfy-Org/workflow_templates/main/templates/image_qwen_image_2_1_t2i.json",
+        "https://raw.githubusercontent.com/Comfy-Org/workflow_templates/main/templates/image_qwen_image_2_1_image_edit.json"
+      ],
+      "approx_download_gb": 18,
+      "readiness": [
+        "Recent ComfyUI",
+        "ConvRot supported",
+        "12-16 GB VRAM recommended"
+      ]
+    },
+    {
+      "id": "wan2.2-ti2v-5b",
+      "title": "Wan2.2 TI2V 5B Practical Video Stack",
+      "type": "Video",
+      "tier": "12\u201316 GB",
+      "vram_min": 12,
+      "vram_target": 16,
+      "status": "Recommended",
+      "description": "Practical local T2V/I2V baseline for gaming GPUs. Good for portrait/mobile experiments and canonical-keyframe animation.",
+      "source_url": "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged",
+      "license_note": "Apache-2.0 repository metadata. Review model terms and individual components.",
+      "canonical_base": "Video/Wan2.2-TI2V-5B",
+      "assets": [
+        {
+          "repo": "Comfy-Org/Wan_2.2_ComfyUI_Repackaged",
+          "file": "split_files/diffusion_models/wan2.2_ti2v_5B_fp16.safetensors",
+          "target": "diffusion_models"
+        },
+        {
+          "repo": "Comfy-Org/Wan_2.2_ComfyUI_Repackaged",
+          "file": "split_files/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+          "target": "text_encoders"
+        },
+        {
+          "repo": "Comfy-Org/Wan_2.2_ComfyUI_Repackaged",
+          "file": "split_files/vae/wan2.2_vae.safetensors",
+          "target": "vae"
+        }
+      ],
+      "workflow_urls": [
+        "https://raw.githubusercontent.com/Comfy-Org/workflow_templates/main/templates/video_wan2_2_5B_ti2v.json"
+      ],
+      "approx_download_gb": 12,
+      "readiness": [
+        "12-16 GB VRAM practical",
+        "batch size 1 recommended"
+      ]
+    },
+    {
+      "id": "h3-kijai-w4a8-clipproj",
+      "title": "MiniMax H3 Kijai W4A8 + ClipProj",
+      "type": "Video + Audio + References",
+      "tier": "16 GB",
+      "vram_min": 16,
+      "vram_target": 16,
+      "status": "Experimental Pick",
+      "description": "Superior MI experimental H3 stack: Kijai pruned W4A8 FL2VA/Ref2VA, 4B Qwen3-VL via ClipProj, ConvRot VAE, and reduced LightX2V accelerators.",
+      "source_url": "https://huggingface.co/Kijai/MiniMax-H3-experimental",
+      "license_url": "https://huggingface.co/MiniMaxAI/MiniMax-H3/blob/main/LICENSE",
+      "license_note": "MiniMax H3 license excludes the US, EU, UK, and Republic of Korea unless separate authorization applies. Download is gated behind an explicit rights/authorization acknowledgement.",
+      "license_restricted": true,
+      "canonical_base": "Video/MiniMax-H3",
+      "custom_nodes": [
+        {
+          "repo": "https://github.com/nicolab28/ComfyUI-ClipProj.git",
+          "folder": "ComfyUI-ClipProj"
+        }
+      ],
+      "assets": [
+        {
+          "repo": "Kijai/MiniMax-H3-experimental",
+          "file": "minimax_h3_fl2va_pruned_w4a8_mixed.safetensors",
+          "target": "diffusion_models"
+        },
+        {
+          "repo": "Kijai/MiniMax-H3-experimental",
+          "file": "minimax_h3_ref2va_pruned_w4a8_mixed.safetensors",
+          "target": "diffusion_models"
+        },
+        {
+          "repo": "DreamFast/Qwen3-VL-4b-Heretic-ComfyUI",
+          "file": "qwen3-vl-4b-heretic_int8.safetensors",
+          "target": "text_encoders"
+        },
+        {
+          "repo": "NicoLab28/ClipProj-MiniMax-H3",
+          "file": "mmh3-4b-ClipProj-v3.1.safetensors",
+          "target": "clip_projections"
+        },
+        {
+          "repo": "Comfy-Org/MiniMax-H3",
+          "file": "vae/minimax_h3_video_vae_int8_convrot.safetensors",
+          "target": "vae"
+        },
+        {
+          "repo": "Comfy-Org/MiniMax-H3",
+          "file": "vae/minimax_h3_audio_vae_fp32.safetensors",
+          "target": "vae"
+        },
+        {
+          "repo": "Kijai/MiniMax-H3_comfy",
+          "file": "loras/minimax_h3_fl2v_lightx2v_turbo_4step_v1.0_768p_resized_avg_rank_31_bf16.safetensors",
+          "target": "loras"
+        },
+        {
+          "repo": "Kijai/MiniMax-H3_comfy",
+          "file": "loras/minimax_h3_fl2v_lightx2v_turbo_8step_v1.0_resized_avg_rank_24_bf16.safetensors",
+          "target": "loras"
+        },
+        {
+          "repo": "Kijai/MiniMax-H3_comfy",
+          "file": "loras/minimax_h3_ref2v_lightx2v_turbo_4step_v0.1_resized_avg_rank_20_bf16.safetensors",
+          "target": "loras"
+        }
+      ],
+      "workflow_urls": [
+        "https://raw.githubusercontent.com/Comfy-Org/workflow_templates/main/templates/video_minimax_h3_t2v.json",
+        "https://raw.githubusercontent.com/Comfy-Org/workflow_templates/main/templates/video_minimax_h3_i2v.json",
+        "https://raw.githubusercontent.com/Comfy-Org/workflow_templates/main/templates/video_minimax_h3_r2v.json"
+      ],
+      "approx_download_gb": 34,
+      "readiness": [
+        "ComfyUI >= 0.31",
+        "PyTorch cu130 preferred for ConvRot",
+        "32 GB system RAM recommended",
+        "Fast NVMe recommended"
+      ]
+    },
+    {
+      "id": "h3-official-pruned-int8",
+      "title": "MiniMax H3 Official Pruned INT8 ConvRot",
+      "type": "Video + Audio",
+      "tier": "24 GB+",
+      "vram_min": 20,
+      "vram_target": 24,
+      "status": "Quality / Heavy",
+      "description": "Closer to the official Comfy-Org H3 path. The pruned INT8 ConvRot diffusion model alone is about 21 GB, so this is better suited to 24 GB+ GPUs or aggressive offload.",
+      "source_url": "https://huggingface.co/Comfy-Org/MiniMax-H3",
+      "license_url": "https://huggingface.co/MiniMaxAI/MiniMax-H3/blob/main/LICENSE",
+      "license_note": "MiniMax H3 territorial restrictions apply. Download is gated behind rights/authorization acknowledgement.",
+      "license_restricted": true,
+      "canonical_base": "Video/MiniMax-H3-Official",
+      "assets": [
+        {
+          "repo": "Comfy-Org/MiniMax-H3",
+          "file": "diffusion_models/minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+          "target": "diffusion_models"
+        },
+        {
+          "repo": "Comfy-Org/MiniMax-H3",
+          "file": "text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+          "target": "text_encoders"
+        },
+        {
+          "repo": "Comfy-Org/MiniMax-H3",
+          "file": "vae/minimax_h3_video_vae_int8_convrot.safetensors",
+          "target": "vae"
+        },
+        {
+          "repo": "Comfy-Org/MiniMax-H3",
+          "file": "vae/minimax_h3_audio_vae_fp32.safetensors",
+          "target": "vae"
+        }
+      ],
+      "workflow_urls": [
+        "https://raw.githubusercontent.com/Comfy-Org/workflow_templates/main/templates/video_minimax_h3_t2v.json"
+      ]
+    },
+    {
+      "id": "joyfox-h3-turbo-addon",
+      "title": "JoyFox MiniMax H3 4-Step Turbo Add-on",
+      "type": "H3 Accelerator",
+      "tier": "H3 add-on",
+      "vram_min": 16,
+      "vram_target": 24,
+      "status": "Alternate / Compare",
+      "description": "752 MB four-step T2V/I2V LoRA. Best treated as a controlled comparison after a baseline H3 stack is qualified.",
+      "source_url": "https://huggingface.co/joyfox/MiniMax-H3-Turbo",
+      "license_url": "https://huggingface.co/MiniMaxAI/MiniMax-H3/blob/main/LICENSE",
+      "license_note": "Derived H3 use may inherit MiniMax H3 restrictions. Confirm applicable rights before downloading or using.",
+      "license_restricted": true,
+      "canonical_base": "Video/MiniMax-H3/loras",
+      "assets": [
+        {
+          "repo": "joyfox/MiniMax-H3-Turbo",
+          "file": "minimax_h3_fl2va_4step_lora.safetensors",
+          "target": "loras"
+        }
+      ]
+    },
+    {
+      "id": "ltx2.3-watch",
+      "title": "LTX-2.3 22B ComfyUI Stack",
+      "type": "Video",
+      "tier": "24 GB+ / Offload",
+      "vram_min": 16,
+      "vram_target": 24,
+      "status": "Watch / Research",
+      "description": "Modern 22B video family with current Comfy-Org packaging. Keep as a higher-end alternative when you want to compare H3/Wan against another current architecture.",
+      "source_url": "https://huggingface.co/Comfy-Org/ltx-2.3",
+      "license_note": "LTX-2 community license. Review model card and license before use.",
+      "canonical_base": "Video/LTX-2.3",
+      "assets": [],
+      "workflow_urls": []
+    },
+    {
+      "id": "framepack-f1-low-vram",
+      "title": "FramePack F1 Memory-Managed I2V",
+      "type": "Video / I2V",
+      "tier": "6\u201316 GB",
+      "vram_min": 6,
+      "vram_target": 12,
+      "status": "Low-VRAM Alternative",
+      "description": "Forward-only FramePack F1 is designed around staged memory management and advertises operation from 6 GB VRAM, though real-world RAM/offload behavior varies significantly.",
+      "source_url": "https://huggingface.co/lllyasviel/FramePack_F1_I2V_HY_20250503",
+      "license_note": "Review the FramePack repository/model terms. This entry is informational; use the official FramePack runtime rather than forcing it into ComfyUI.",
+      "canonical_base": "Video/FramePack",
+      "assets": [],
+      "workflow_urls": []
+    },
+    {
+      "id": "h3-anime-motion-addon",
+      "title": "MiniMax H3 Anime Motion I2V LoRA",
+      "type": "H3 Style Add-on",
+      "tier": "H3 add-on",
+      "vram_min": 16,
+      "vram_target": 16,
+      "status": "Style Pick",
+      "description": "Experimental I2V anime-motion LoRA for subtle character/background motion. Default training resolution is 480x832; trigger word Anime-Motion.",
+      "source_url": "https://huggingface.co/prithivMLmods/MiniMax-H3-I2V-Anime-Motion-LoRA",
+      "license_url": "https://huggingface.co/MiniMaxAI/MiniMax-H3/blob/main/LICENSE",
+      "license_restricted": true,
+      "license_note": "Inherits the MiniMax H3 Community License. Confirm applicable authorization before use.",
+      "canonical_base": "Video/MiniMax-H3/loras",
+      "approx_download_gb": 0.08,
+      "assets": [
+        {
+          "repo": "prithivMLmods/MiniMax-H3-I2V-Anime-Motion-LoRA",
+          "file": "MiniMax-H3-I2V-Anime-Motion-LoRA-1400.safetensors",
+          "target": "loras"
+        }
+      ],
+      "readiness": [
+        "Requires a compatible H3 base stack",
+        "Designed for I2V",
+        "Use trigger: Anime-Motion"
+      ]
+    },
+    {
+      "id": "h3-lightx-sla-addon",
+      "title": "LightX2V MiniMax H3 Turbo SLA",
+      "type": "H3 Accelerator",
+      "tier": "H3 add-on",
+      "vram_min": 16,
+      "vram_target": 24,
+      "status": "Experimental Accelerator",
+      "description": "Sparse-latent-attention H3 Turbo add-on. Useful as a research path for reducing attention cost after a baseline H3 stack is stable.",
+      "source_url": "https://huggingface.co/lightx2v/Minimax-h3-Turbo-SLA",
+      "license_note": "Apache-2.0 adapter repository, but the MiniMax H3 base license still applies.",
+      "license_url": "https://huggingface.co/MiniMaxAI/MiniMax-H3/blob/main/LICENSE",
+      "license_restricted": true,
+      "canonical_base": "Video/MiniMax-H3/loras",
+      "approx_download_gb": 1.4,
+      "assets": [
+        {
+          "repo": "lightx2v/Minimax-h3-Turbo-SLA",
+          "file": "minimax_h3_fl2v_turbo_4step_v0.1_768p_sla_comfyui_bf16.safetensors",
+          "target": "loras"
+        }
+      ],
+      "readiness": [
+        "Requires compatible H3 FL2VA base",
+        "Treat as a comparison after baseline qualification"
+      ]
+    },
+    {
+      "id": "h3-fun-controlnet",
+      "title": "MiniMax H3 Fun ControlNet Union 2.0",
+      "type": "H3 Control",
+      "tier": "H3 add-on",
+      "vram_min": 16,
+      "vram_target": 24,
+      "status": "Control / Later Wave",
+      "description": "Kijai/Comfy-Org ControlNet Union model patch for structural conditioning. Keep it out of the baseline until H3 generation itself is stable.",
+      "source_url": "https://huggingface.co/Kijai/MiniMax-H3-experimental",
+      "license_url": "https://huggingface.co/MiniMaxAI/MiniMax-H3/blob/main/LICENSE",
+      "license_restricted": true,
+      "license_note": "MiniMax H3 restrictions apply.",
+      "canonical_base": "Video/MiniMax-H3/model_patches",
+      "approx_download_gb": 4.6,
+      "assets": [
+        {
+          "repo": "Kijai/MiniMax-H3-experimental",
+          "file": "model_patches/minimax_h3_fun_controlnet_union_2.0_pruned_int8_convrot.safetensors",
+          "target": "model_patches"
+        }
+      ],
+      "readiness": [
+        "Requires current ComfyUI H3 support",
+        "Adds substantial VRAM/disk pressure"
+      ]
+    },
+    {
+      "id": "hunyuan-video-1.5-comfy",
+      "title": "HunyuanVideo 1.5 ComfyUI",
+      "type": "Video",
+      "tier": "16 GB+ / Offload",
+      "vram_min": 12,
+      "vram_target": 24,
+      "status": "Modern Alternative",
+      "description": "Current Tencent HunyuanVideo 1.5 packaged for ComfyUI, with 480p distilled/FP8 options and official 720p T2V/I2V workflow templates. Source-only until a smaller validated one-click component set is frozen.",
+      "source_url": "https://huggingface.co/Comfy-Org/HunyuanVideo_1.5_repackaged",
+      "license_note": "Tencent Hunyuan Community License; review terms before use.",
+      "canonical_base": "Video/HunyuanVideo-1.5",
+      "assets": [],
+      "approx_download_gb": 0,
+      "workflow_urls": [
+        "https://raw.githubusercontent.com/Comfy-Org/workflow_templates/main/templates/video_hunyuan_video_1.5_720p_i2v.json",
+        "https://raw.githubusercontent.com/Comfy-Org/workflow_templates/main/templates/video_hunyuan_video_1.5_720p_t2v.json"
+      ],
+      "readiness": [
+        "ComfyUI supported",
+        "480p distilled FP8 components exist",
+        "Wan2GP documents operation as low as 6 GB VRAM outside ComfyUI"
+      ]
+    },
+    {
+      "id": "flux2-klein-int8-comfy",
+      "title": "FLUX.2 Klein 4B INT8 Comfy Experimental",
+      "type": "Image",
+      "tier": "8-16 GB",
+      "vram_min": 8,
+      "vram_target": 16,
+      "status": "Alternate Quantization",
+      "description": "Community INT8 quantization path for FLUX.2 Klein with a custom ComfyUI INT8 loader. Benchmarks from the maintainer show warmed-run speedups on RTX 3090/3060 versus FP8, though first-run cost can be worse.",
+      "source_url": "https://huggingface.co/Bedovyy/FLUX.2-klein-4B-INT8-Comfy",
+      "license_note": "Apache-2.0 base model; custom loader required. Review repository terms.",
+      "canonical_base": "Image/FLUX.2-Klein-4B-INT8",
+      "assets": [],
+      "approx_download_gb": 0,
+      "readiness": [
+        "Requires ComfyUI-Flux2-INT8 custom node",
+        "Best treated as benchmark alternative to the simpler FP8 baseline"
+      ]
+    },
+    {
+      "id": "qwen21-prompt-enhancer",
+      "title": "Qwen Image 2.1 Prompt Enhancer Add-on",
+      "type": "Image Add-on",
+      "tier": "16 GB / Offload",
+      "vram_min": 12,
+      "vram_target": 16,
+      "status": "Optional Quality Tool",
+      "description": "Official Comfy-Org Qwen3.5 9B prompt-enhancer encoders for Qwen Image 2.1 T2I/I2I. Large (~9.47 GB each), so install only if prompt rewriting is worth the RAM/disk cost.",
+      "source_url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
+      "license_note": "Qwen research license applies.",
+      "canonical_base": "Image/Qwen-Image-2.1/text_encoders",
+      "approx_download_gb": 18.9,
+      "assets": [
+        {
+          "repo": "Comfy-Org/Qwen-Image-2.1",
+          "file": "text_encoders/qwen3.5_9b_qwen_image_2.1_pe_t2i.int8_convrot.safetensors",
+          "target": "text_encoders"
+        },
+        {
+          "repo": "Comfy-Org/Qwen-Image-2.1",
+          "file": "text_encoders/qwen3.5_9b_qwen_image_2.1_pe_i2i.int8_convrot.safetensors",
+          "target": "text_encoders"
+        }
+      ],
+      "readiness": [
+        "Optional, not required for normal Qwen Image 2.1 generation",
+        "Expect CPU/GPU offload on 16 GB cards"
+      ]
+    }
+  ]
+}

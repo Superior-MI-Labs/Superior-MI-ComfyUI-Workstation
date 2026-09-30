@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "version": "3.0.3",
+  "channel": "development",
+  "status": "pre-release qualification",
+  "repo_url": "https://github.com/Superior-MI-Labs/Superior-MI-ComfyUI-Workstation",
+  "source_url": "https://github.com/Superior-MI-Labs/Superior-MI-ComfyUI-Workstation/archive/refs/heads/main.zip",
+  "deb_url": "",
+  "zip_url": "",
+  "sha256": {
+    "deb": "",
+    "zip": ""
+  },
+  "notes": "3.0.3 fixes Qwen Image 2.1 V3 Autogrow reference inputs and makes Create controls derive from the selected Blueprint graph. Runtime node inputs are preflighted against local /object_info before queueing."
+}

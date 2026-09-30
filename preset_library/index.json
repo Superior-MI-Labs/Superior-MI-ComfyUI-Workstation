@@ -1,0 +1,593 @@
+{
+  "version": "1.1.0",
+  "presets": [
+    {
+      "id": "Image_FLUX2-Klein_01_Smoke_512",
+      "category": "Image",
+      "family": "FLUX.2 Klein 4B",
+      "profile": "Smoke",
+      "title": "Smoke 512",
+      "path": "Image/FLUX2-Klein/01_Smoke_512.json",
+      "description": "Smoke preset for FLUX.2 Klein 4B at 512×512, 4-step distilled path.",
+      "required_files": [
+        "flux-2-klein-4b-fp8.safetensors",
+        "qwen_3_4b_fp4_flux2.safetensors",
+        "flux2-vae.safetensors"
+      ]
+    },
+    {
+      "id": "Image_FLUX2-Klein_02_Portrait_768",
+      "category": "Image",
+      "family": "FLUX.2 Klein 4B",
+      "profile": "Portrait",
+      "title": "Portrait 768",
+      "path": "Image/FLUX2-Klein/02_Portrait_768.json",
+      "description": "Portrait preset for FLUX.2 Klein 4B at 768×768, 4-step distilled path.",
+      "required_files": [
+        "flux-2-klein-4b-fp8.safetensors",
+        "qwen_3_4b_fp4_flux2.safetensors",
+        "flux2-vae.safetensors"
+      ]
+    },
+    {
+      "id": "Image_FLUX2-Klein_03_Landscape_1024x576",
+      "category": "Image",
+      "family": "FLUX.2 Klein 4B",
+      "profile": "Landscape",
+      "title": "Landscape 1024x576",
+      "path": "Image/FLUX2-Klein/03_Landscape_1024x576.json",
+      "description": "Landscape preset for FLUX.2 Klein 4B at 1024×576, 4-step distilled path.",
+      "required_files": [
+        "flux-2-klein-4b-fp8.safetensors",
+        "qwen_3_4b_fp4_flux2.safetensors",
+        "flux2-vae.safetensors"
+      ]
+    },
+    {
+      "id": "Mobile_FLUX2-Klein_04_Phone_Wallpaper_576x1024",
+      "category": "Mobile",
+      "family": "FLUX.2 Klein 4B",
+      "profile": "Mobile",
+      "title": "Phone Wallpaper 576x1024",
+      "path": "Mobile/FLUX2-Klein/04_Phone_Wallpaper_576x1024.json",
+      "description": "Mobile preset for FLUX.2 Klein 4B at 576×1024, 4-step distilled path.",
+      "required_files": [
+        "flux-2-klein-4b-fp8.safetensors",
+        "qwen_3_4b_fp4_flux2.safetensors",
+        "flux2-vae.safetensors"
+      ]
+    },
+    {
+      "id": "Image_FLUX2-Klein_05_Product_768",
+      "category": "Image",
+      "family": "FLUX.2 Klein 4B",
+      "profile": "Product",
+      "title": "Product Studio",
+      "path": "Image/FLUX2-Klein/05_Product_768.json",
+      "description": "Product preset for FLUX.2 Klein 4B at 768×768, 4-step distilled path.",
+      "required_files": [
+        "flux-2-klein-4b-fp8.safetensors",
+        "qwen_3_4b_fp4_flux2.safetensors",
+        "flux2-vae.safetensors"
+      ]
+    },
+    {
+      "id": "Image_FLUX2-Klein_06_Poster_768x1024",
+      "category": "Image",
+      "family": "FLUX.2 Klein 4B",
+      "profile": "Typography",
+      "title": "Poster / Typography",
+      "path": "Image/FLUX2-Klein/06_Poster_768x1024.json",
+      "description": "Typography preset for FLUX.2 Klein 4B at 768×1024, 4-step distilled path.",
+      "required_files": [
+        "flux-2-klein-4b-fp8.safetensors",
+        "qwen_3_4b_fp4_flux2.safetensors",
+        "flux2-vae.safetensors"
+      ]
+    },
+    {
+      "id": "Styles_FLUX2-Klein_07_Editorial_768",
+      "category": "Style",
+      "family": "FLUX.2 Klein 4B",
+      "profile": "Illustration",
+      "title": "Editorial Illustration",
+      "path": "Styles/FLUX2-Klein/07_Editorial_768.json",
+      "description": "Illustration preset for FLUX.2 Klein 4B at 768×768, 4-step distilled path.",
+      "required_files": [
+        "flux-2-klein-4b-fp8.safetensors",
+        "qwen_3_4b_fp4_flux2.safetensors",
+        "flux2-vae.safetensors"
+      ]
+    },
+    {
+      "id": "Styles_FLUX2-Klein_08_Anime_768",
+      "category": "Style",
+      "family": "FLUX.2 Klein 4B",
+      "profile": "Anime",
+      "title": "Anime / Cel Style",
+      "path": "Styles/FLUX2-Klein/08_Anime_768.json",
+      "description": "Anime preset for FLUX.2 Klein 4B at 768×768, 4-step distilled path.",
+      "required_files": [
+        "flux-2-klein-4b-fp8.safetensors",
+        "qwen_3_4b_fp4_flux2.safetensors",
+        "flux2-vae.safetensors"
+      ]
+    },
+    {
+      "id": "Styles_FLUX2-Klein_09_Cartoon_768",
+      "category": "Style",
+      "family": "FLUX.2 Klein 4B",
+      "profile": "Cartoon",
+      "title": "Graphic Cartoon",
+      "path": "Styles/FLUX2-Klein/09_Cartoon_768.json",
+      "description": "Cartoon preset for FLUX.2 Klein 4B at 768×768, 4-step distilled path.",
+      "required_files": [
+        "flux-2-klein-4b-fp8.safetensors",
+        "qwen_3_4b_fp4_flux2.safetensors",
+        "flux2-vae.safetensors"
+      ]
+    },
+    {
+      "id": "Styles_FLUX2-Klein_10_Anthro_768",
+      "category": "Style",
+      "family": "FLUX.2 Klein 4B",
+      "profile": "Anthro",
+      "title": "Anthro / Furry",
+      "path": "Styles/FLUX2-Klein/10_Anthro_768.json",
+      "description": "Anthro preset for FLUX.2 Klein 4B at 768×768, 4-step distilled path.",
+      "required_files": [
+        "flux-2-klein-4b-fp8.safetensors",
+        "qwen_3_4b_fp4_flux2.safetensors",
+        "flux2-vae.safetensors"
+      ]
+    },
+    {
+      "id": "Benchmarks_FLUX2-Klein_11_Benchmark_768",
+      "category": "Benchmark",
+      "family": "FLUX.2 Klein 4B",
+      "profile": "Benchmark",
+      "title": "Seed Benchmark",
+      "path": "Benchmarks/FLUX2-Klein/11_Benchmark_768.json",
+      "description": "Benchmark preset for FLUX.2 Klein 4B at 768×768, 4-step distilled path.",
+      "required_files": [
+        "flux-2-klein-4b-fp8.safetensors",
+        "qwen_3_4b_fp4_flux2.safetensors",
+        "flux2-vae.safetensors"
+      ]
+    },
+    {
+      "id": "Image_FLUX2-Klein_12_Cinematic_Wide_1152x640",
+      "category": "Image",
+      "family": "FLUX.2 Klein 4B",
+      "profile": "Wide",
+      "title": "Cinematic Wide",
+      "path": "Image/FLUX2-Klein/12_Cinematic_Wide_1152x640.json",
+      "description": "Wide preset for FLUX.2 Klein 4B at 1152×640, 4-step distilled path.",
+      "required_files": [
+        "flux-2-klein-4b-fp8.safetensors",
+        "qwen_3_4b_fp4_flux2.safetensors",
+        "flux2-vae.safetensors"
+      ]
+    },
+    {
+      "id": "Image_Qwen-Image-2.1_01_Smoke_512_8step",
+      "category": "Image",
+      "family": "Qwen Image 2.1",
+      "profile": "Smoke",
+      "title": "Smoke 512",
+      "path": "Image/Qwen-Image-2.1/01_Smoke_512_8step.json",
+      "description": "Smoke preset for Qwen Image 2.1 using Euler/simple and CFG 1.",
+      "required_files": [
+        "qwen_image_2.1_int8_convrot.safetensors",
+        "qwen3vl_8b_int8_convrot.safetensors",
+        "qwen_image_2.1_vae_bf16.safetensors"
+      ]
+    },
+    {
+      "id": "Image_Qwen-Image-2.1_02_Fast_640_12step",
+      "category": "Image",
+      "family": "Qwen Image 2.1",
+      "profile": "Fast",
+      "title": "Fast 640",
+      "path": "Image/Qwen-Image-2.1/02_Fast_640_12step.json",
+      "description": "Fast preset for Qwen Image 2.1 using Euler/simple and CFG 1.",
+      "required_files": [
+        "qwen_image_2.1_int8_convrot.safetensors",
+        "qwen3vl_8b_int8_convrot.safetensors",
+        "qwen_image_2.1_vae_bf16.safetensors"
+      ]
+    },
+    {
+      "id": "Image_Qwen-Image-2.1_03_Normal_768_16step",
+      "category": "Image",
+      "family": "Qwen Image 2.1",
+      "profile": "Normal",
+      "title": "Normal 768",
+      "path": "Image/Qwen-Image-2.1/03_Normal_768_16step.json",
+      "description": "Normal preset for Qwen Image 2.1 using Euler/simple and CFG 1.",
+      "required_files": [
+        "qwen_image_2.1_int8_convrot.safetensors",
+        "qwen3vl_8b_int8_convrot.safetensors",
+        "qwen_image_2.1_vae_bf16.safetensors"
+      ]
+    },
+    {
+      "id": "Image_Qwen-Image-2.1_04_Quality_1024_25step",
+      "category": "Image",
+      "family": "Qwen Image 2.1",
+      "profile": "Quality",
+      "title": "Quality 1024",
+      "path": "Image/Qwen-Image-2.1/04_Quality_1024_25step.json",
+      "description": "Quality preset for Qwen Image 2.1 using Euler/simple and CFG 1.",
+      "required_files": [
+        "qwen_image_2.1_int8_convrot.safetensors",
+        "qwen3vl_8b_int8_convrot.safetensors",
+        "qwen_image_2.1_vae_bf16.safetensors"
+      ]
+    },
+    {
+      "id": "Mobile_Qwen-Image-2.1_05_Phone_576x1024_16step",
+      "category": "Mobile",
+      "family": "Qwen Image 2.1",
+      "profile": "Mobile",
+      "title": "Phone Portrait",
+      "path": "Mobile/Qwen-Image-2.1/05_Phone_576x1024_16step.json",
+      "description": "Mobile preset for Qwen Image 2.1 using Euler/simple and CFG 1.",
+      "required_files": [
+        "qwen_image_2.1_int8_convrot.safetensors",
+        "qwen3vl_8b_int8_convrot.safetensors",
+        "qwen_image_2.1_vae_bf16.safetensors"
+      ]
+    },
+    {
+      "id": "Image_Qwen-Image-2.1_06_Wide_1024x576_16step",
+      "category": "Image",
+      "family": "Qwen Image 2.1",
+      "profile": "Wide",
+      "title": "Wide Scene",
+      "path": "Image/Qwen-Image-2.1/06_Wide_1024x576_16step.json",
+      "description": "Wide preset for Qwen Image 2.1 using Euler/simple and CFG 1.",
+      "required_files": [
+        "qwen_image_2.1_int8_convrot.safetensors",
+        "qwen3vl_8b_int8_convrot.safetensors",
+        "qwen_image_2.1_vae_bf16.safetensors"
+      ]
+    },
+    {
+      "id": "Image_Qwen-Image-2.1_07_Typography_768_20step",
+      "category": "Image",
+      "family": "Qwen Image 2.1",
+      "profile": "Typography",
+      "title": "Typography Test",
+      "path": "Image/Qwen-Image-2.1/07_Typography_768_20step.json",
+      "description": "Typography preset for Qwen Image 2.1 using Euler/simple and CFG 1.",
+      "required_files": [
+        "qwen_image_2.1_int8_convrot.safetensors",
+        "qwen3vl_8b_int8_convrot.safetensors",
+        "qwen_image_2.1_vae_bf16.safetensors"
+      ]
+    },
+    {
+      "id": "Image_Qwen-Image-2.1_08_Product_768_16step",
+      "category": "Image",
+      "family": "Qwen Image 2.1",
+      "profile": "Product",
+      "title": "Product Hero",
+      "path": "Image/Qwen-Image-2.1/08_Product_768_16step.json",
+      "description": "Product preset for Qwen Image 2.1 using Euler/simple and CFG 1.",
+      "required_files": [
+        "qwen_image_2.1_int8_convrot.safetensors",
+        "qwen3vl_8b_int8_convrot.safetensors",
+        "qwen_image_2.1_vae_bf16.safetensors"
+      ]
+    },
+    {
+      "id": "Styles_Qwen-Image-2.1_09_Anime_768_16step",
+      "category": "Style",
+      "family": "Qwen Image 2.1",
+      "profile": "Anime",
+      "title": "Anime Key Art",
+      "path": "Styles/Qwen-Image-2.1/09_Anime_768_16step.json",
+      "description": "Anime preset for Qwen Image 2.1 using Euler/simple and CFG 1.",
+      "required_files": [
+        "qwen_image_2.1_int8_convrot.safetensors",
+        "qwen3vl_8b_int8_convrot.safetensors",
+        "qwen_image_2.1_vae_bf16.safetensors"
+      ]
+    },
+    {
+      "id": "Styles_Qwen-Image-2.1_10_Cartoon_768_16step",
+      "category": "Style",
+      "family": "Qwen Image 2.1",
+      "profile": "Cartoon",
+      "title": "Cartoon Character",
+      "path": "Styles/Qwen-Image-2.1/10_Cartoon_768_16step.json",
+      "description": "Cartoon preset for Qwen Image 2.1 using Euler/simple and CFG 1.",
+      "required_files": [
+        "qwen_image_2.1_int8_convrot.safetensors",
+        "qwen3vl_8b_int8_convrot.safetensors",
+        "qwen_image_2.1_vae_bf16.safetensors"
+      ]
+    },
+    {
+      "id": "Styles_Qwen-Image-2.1_11_Anthro_768_16step",
+      "category": "Style",
+      "family": "Qwen Image 2.1",
+      "profile": "Anthro",
+      "title": "Anthro Character",
+      "path": "Styles/Qwen-Image-2.1/11_Anthro_768_16step.json",
+      "description": "Anthro preset for Qwen Image 2.1 using Euler/simple and CFG 1.",
+      "required_files": [
+        "qwen_image_2.1_int8_convrot.safetensors",
+        "qwen3vl_8b_int8_convrot.safetensors",
+        "qwen_image_2.1_vae_bf16.safetensors"
+      ]
+    },
+    {
+      "id": "Character_Qwen-Image-2.1_12_Character_Concept_768_18step",
+      "category": "Character",
+      "family": "Qwen Image 2.1",
+      "profile": "Concept",
+      "title": "Character Concept",
+      "path": "Character/Qwen-Image-2.1/12_Character_Concept_768_18step.json",
+      "description": "Concept preset for Qwen Image 2.1 using Euler/simple and CFG 1.",
+      "required_files": [
+        "qwen_image_2.1_int8_convrot.safetensors",
+        "qwen3vl_8b_int8_convrot.safetensors",
+        "qwen_image_2.1_vae_bf16.safetensors"
+      ]
+    },
+    {
+      "id": "Character_Qwen-Image-2.1_20_Single_Reference",
+      "category": "Character",
+      "family": "Qwen Image 2.1",
+      "profile": "Single Reference",
+      "title": "Single Identity Reference",
+      "path": "Character/Qwen-Image-2.1/20_Single_Reference.json",
+      "description": "Reference-aware canonical character workflow. Replace each LoadImage placeholder before running.",
+      "required_files": [
+        "qwen_image_2.1_int8_convrot.safetensors",
+        "qwen3vl_8b_int8_convrot.safetensors",
+        "qwen_image_2.1_vae_bf16.safetensors"
+      ]
+    },
+    {
+      "id": "Character_Qwen-Image-2.1_21_Identity_Plus_Outfit",
+      "category": "Character",
+      "family": "Qwen Image 2.1",
+      "profile": "Identity + Outfit",
+      "title": "Identity + Outfit",
+      "path": "Character/Qwen-Image-2.1/21_Identity_Plus_Outfit.json",
+      "description": "Reference-aware canonical character workflow. Replace each LoadImage placeholder before running.",
+      "required_files": [
+        "qwen_image_2.1_int8_convrot.safetensors",
+        "qwen3vl_8b_int8_convrot.safetensors",
+        "qwen_image_2.1_vae_bf16.safetensors"
+      ]
+    },
+    {
+      "id": "Character_Qwen-Image-2.1_22_Identity_Pose_Style",
+      "category": "Character",
+      "family": "Qwen Image 2.1",
+      "profile": "Identity + Pose + Style",
+      "title": "Identity + Pose + Style",
+      "path": "Character/Qwen-Image-2.1/22_Identity_Pose_Style.json",
+      "description": "Reference-aware canonical character workflow. Replace each LoadImage placeholder before running.",
+      "required_files": [
+        "qwen_image_2.1_int8_convrot.safetensors",
+        "qwen3vl_8b_int8_convrot.safetensors",
+        "qwen_image_2.1_vae_bf16.safetensors"
+      ]
+    },
+    {
+      "id": "Character_Qwen-Image-2.1_23_Four_View_Canonical",
+      "category": "Character",
+      "family": "Qwen Image 2.1",
+      "profile": "Four View Canon",
+      "title": "Four-View Canonical Character",
+      "path": "Character/Qwen-Image-2.1/23_Four_View_Canonical.json",
+      "description": "Reference-aware canonical character workflow. Replace each LoadImage placeholder before running.",
+      "required_files": [
+        "qwen_image_2.1_int8_convrot.safetensors",
+        "qwen3vl_8b_int8_convrot.safetensors",
+        "qwen_image_2.1_vae_bf16.safetensors"
+      ]
+    },
+    {
+      "id": "Video_Wan2.2-TI2V-5B_01_Smoke_640x352_33f_10step",
+      "category": "Video",
+      "family": "Wan2.2 TI2V 5B",
+      "profile": "Smoke",
+      "title": "Landscape Smoke 640x352 33f",
+      "path": "Video/Wan2.2-TI2V-5B/01_Smoke_640x352_33f_10step.json",
+      "description": "Wan2.2 TI2V 5B Smoke preset at 640×352, 33 frames, 10 steps.",
+      "required_files": [
+        "wan2.2_ti2v_5B_fp16.safetensors",
+        "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+        "wan2.2_vae.safetensors"
+      ]
+    },
+    {
+      "id": "Video_Wan2.2-TI2V-5B_02_Fast_640x352_49f_12step",
+      "category": "Video",
+      "family": "Wan2.2 TI2V 5B",
+      "profile": "Fast",
+      "title": "Fast 640x352 49f",
+      "path": "Video/Wan2.2-TI2V-5B/02_Fast_640x352_49f_12step.json",
+      "description": "Wan2.2 TI2V 5B Fast preset at 640×352, 49 frames, 12 steps.",
+      "required_files": [
+        "wan2.2_ti2v_5B_fp16.safetensors",
+        "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+        "wan2.2_vae.safetensors"
+      ]
+    },
+    {
+      "id": "Video_Wan2.2-TI2V-5B_03_Normal_832x480_49f_16step",
+      "category": "Video",
+      "family": "Wan2.2 TI2V 5B",
+      "profile": "Normal",
+      "title": "Normal 832x480 49f",
+      "path": "Video/Wan2.2-TI2V-5B/03_Normal_832x480_49f_16step.json",
+      "description": "Wan2.2 TI2V 5B Normal preset at 832×480, 49 frames, 16 steps.",
+      "required_files": [
+        "wan2.2_ti2v_5B_fp16.safetensors",
+        "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+        "wan2.2_vae.safetensors"
+      ]
+    },
+    {
+      "id": "Video_Wan2.2-TI2V-5B_04_Quality_832x480_81f_20step",
+      "category": "Video",
+      "family": "Wan2.2 TI2V 5B",
+      "profile": "Quality",
+      "title": "Quality 832x480 81f",
+      "path": "Video/Wan2.2-TI2V-5B/04_Quality_832x480_81f_20step.json",
+      "description": "Wan2.2 TI2V 5B Quality preset at 832×480, 81 frames, 20 steps.",
+      "required_files": [
+        "wan2.2_ti2v_5B_fp16.safetensors",
+        "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+        "wan2.2_vae.safetensors"
+      ]
+    },
+    {
+      "id": "Mobile_Wan2.2-TI2V-5B_05_Phone_Smoke_480x832_33f",
+      "category": "Mobile",
+      "family": "Wan2.2 TI2V 5B",
+      "profile": "Mobile Smoke",
+      "title": "Phone Smoke 480x832 33f",
+      "path": "Mobile/Wan2.2-TI2V-5B/05_Phone_Smoke_480x832_33f.json",
+      "description": "Wan2.2 TI2V 5B Mobile Smoke preset at 480×832, 33 frames, 10 steps.",
+      "required_files": [
+        "wan2.2_ti2v_5B_fp16.safetensors",
+        "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+        "wan2.2_vae.safetensors"
+      ]
+    },
+    {
+      "id": "Mobile_Wan2.2-TI2V-5B_06_Phone_Normal_576x1024_49f",
+      "category": "Mobile",
+      "family": "Wan2.2 TI2V 5B",
+      "profile": "Mobile Normal",
+      "title": "Phone Normal 576x1024 49f",
+      "path": "Mobile/Wan2.2-TI2V-5B/06_Phone_Normal_576x1024_49f.json",
+      "description": "Wan2.2 TI2V 5B Mobile Normal preset at 576×1024, 49 frames, 16 steps.",
+      "required_files": [
+        "wan2.2_ti2v_5B_fp16.safetensors",
+        "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+        "wan2.2_vae.safetensors"
+      ]
+    },
+    {
+      "id": "Styles_Wan2.2-TI2V-5B_07_Anime_Motion_640x352",
+      "category": "Style",
+      "family": "Wan2.2 TI2V 5B",
+      "profile": "Anime",
+      "title": "Anime Motion",
+      "path": "Styles/Wan2.2-TI2V-5B/07_Anime_Motion_640x352.json",
+      "description": "Wan2.2 TI2V 5B Anime preset at 640×352, 49 frames, 14 steps.",
+      "required_files": [
+        "wan2.2_ti2v_5B_fp16.safetensors",
+        "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+        "wan2.2_vae.safetensors"
+      ]
+    },
+    {
+      "id": "Styles_Wan2.2-TI2V-5B_08_Cartoon_Motion_640x352",
+      "category": "Style",
+      "family": "Wan2.2 TI2V 5B",
+      "profile": "Cartoon",
+      "title": "Cartoon Motion",
+      "path": "Styles/Wan2.2-TI2V-5B/08_Cartoon_Motion_640x352.json",
+      "description": "Wan2.2 TI2V 5B Cartoon preset at 640×352, 49 frames, 14 steps.",
+      "required_files": [
+        "wan2.2_ti2v_5B_fp16.safetensors",
+        "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+        "wan2.2_vae.safetensors"
+      ]
+    },
+    {
+      "id": "Styles_Wan2.2-TI2V-5B_09_Anthro_Motion_640x352",
+      "category": "Style",
+      "family": "Wan2.2 TI2V 5B",
+      "profile": "Anthro",
+      "title": "Anthro Motion",
+      "path": "Styles/Wan2.2-TI2V-5B/09_Anthro_Motion_640x352.json",
+      "description": "Wan2.2 TI2V 5B Anthro preset at 640×352, 49 frames, 14 steps.",
+      "required_files": [
+        "wan2.2_ti2v_5B_fp16.safetensors",
+        "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+        "wan2.2_vae.safetensors"
+      ]
+    },
+    {
+      "id": "Video_Wan2.2-TI2V-5B_10_Product_Turntable",
+      "category": "Video",
+      "family": "Wan2.2 TI2V 5B",
+      "profile": "Product",
+      "title": "Product Turntable",
+      "path": "Video/Wan2.2-TI2V-5B/10_Product_Turntable.json",
+      "description": "Wan2.2 TI2V 5B Product preset at 640×352, 49 frames, 14 steps.",
+      "required_files": [
+        "wan2.2_ti2v_5B_fp16.safetensors",
+        "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+        "wan2.2_vae.safetensors"
+      ]
+    },
+    {
+      "id": "Video_Wan2.2-TI2V-5B_11_Slow_Push_In",
+      "category": "Video",
+      "family": "Wan2.2 TI2V 5B",
+      "profile": "Camera",
+      "title": "Slow Push-In",
+      "path": "Video/Wan2.2-TI2V-5B/11_Slow_Push_In.json",
+      "description": "Wan2.2 TI2V 5B Camera preset at 832×480, 49 frames, 16 steps.",
+      "required_files": [
+        "wan2.2_ti2v_5B_fp16.safetensors",
+        "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+        "wan2.2_vae.safetensors"
+      ]
+    },
+    {
+      "id": "Character_Wan2.2-TI2V-5B_12_I2V_Smoke_480x832",
+      "category": "Character",
+      "family": "Wan2.2 TI2V 5B",
+      "profile": "I2V Smoke",
+      "title": "Reference Image Smoke",
+      "path": "Character/Wan2.2-TI2V-5B/12_I2V_Smoke_480x832.json",
+      "description": "Wan2.2 TI2V 5B I2V Smoke preset at 480×832, 33 frames, 10 steps.",
+      "required_files": [
+        "wan2.2_ti2v_5B_fp16.safetensors",
+        "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+        "wan2.2_vae.safetensors"
+      ]
+    },
+    {
+      "id": "Character_Wan2.2-TI2V-5B_13_I2V_Normal_576x1024",
+      "category": "Character",
+      "family": "Wan2.2 TI2V 5B",
+      "profile": "I2V Normal",
+      "title": "Reference Image Normal",
+      "path": "Character/Wan2.2-TI2V-5B/13_I2V_Normal_576x1024.json",
+      "description": "Wan2.2 TI2V 5B I2V Normal preset at 576×1024, 49 frames, 16 steps.",
+      "required_files": [
+        "wan2.2_ti2v_5B_fp16.safetensors",
+        "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+        "wan2.2_vae.safetensors"
+      ]
+    },
+    {
+      "id": "Benchmarks_Wan2.2-TI2V-5B_14_Benchmark_640x352",
+      "category": "Benchmark",
+      "family": "Wan2.2 TI2V 5B",
+      "profile": "Benchmark",
+      "title": "Motion Benchmark",
+      "path": "Benchmarks/Wan2.2-TI2V-5B/14_Benchmark_640x352.json",
+      "description": "Wan2.2 TI2V 5B Benchmark preset at 640×352, 33 frames, 12 steps.",
+      "required_files": [
+        "wan2.2_ti2v_5B_fp16.safetensors",
+        "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+        "wan2.2_vae.safetensors"
+      ]
+    }
+  ]
+}

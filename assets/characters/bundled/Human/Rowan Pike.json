@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "id": "rowan-pike",
+  "name": "Rowan Pike",
+  "collection": "Superior MI Characters",
+  "kind": "Human",
+  "role": "Community Logistics Coordinator",
+  "identity": "man",
+  "pronouns": "he/him",
+  "body_type": "stocky",
+  "description": "Rowan Pike, a human character in the Superior MI Labs reference-character starter collection.",
+  "tags": [
+    "human",
+    "community",
+    "logistics"
+  ],
+  "reference_type": "character-sheet",
+  "license": "Bundled with Superior MI Labs ComfyUI Workstation for use as a local reference asset."
+}

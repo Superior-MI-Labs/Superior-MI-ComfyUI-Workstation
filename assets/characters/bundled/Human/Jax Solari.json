@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "id": "jax-solari",
+  "name": "Jax Solari",
+  "collection": "Superior MI Characters",
+  "kind": "Human",
+  "role": "Field Systems Engineer",
+  "identity": "man",
+  "pronouns": "he/him",
+  "body_type": "athletic",
+  "description": "Jax Solari, a human character in the Superior MI Labs reference-character starter collection.",
+  "tags": [
+    "human",
+    "field",
+    "engineer"
+  ],
+  "reference_type": "character-sheet",
+  "license": "Bundled with Superior MI Labs ComfyUI Workstation for use as a local reference asset."
+}

@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+<defs>
+  <radialGradient id="bg" cx="50%" cy="35%" r="70%">
+    <stop offset="0" stop-color="#163c59"/>
+    <stop offset="0.62" stop-color="#091725"/>
+    <stop offset="1" stop-color="#050c13"/>
+  </radialGradient>
+  <linearGradient id="cyan" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#79e8ff"/>
+    <stop offset="1" stop-color="#178ed5"/>
+  </linearGradient>
+  <linearGradient id="copper" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#f0b06d"/>
+    <stop offset="1" stop-color="#9f5d32"/>
+  </linearGradient>
+  <filter id="glow">
+    <feGaussianBlur stdDeviation="5" result="b"/>
+    <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+</defs>
+<rect width="512" height="512" rx="108" fill="url(#bg)"/>
+<circle cx="256" cy="238" r="169" fill="none" stroke="#2f759b" stroke-width="3" opacity=".45"/>
+<circle cx="256" cy="238" r="146" fill="none" stroke="#61d9f7" stroke-width="2" opacity=".23"/>
+<!-- Kisha-inspired northern digital avatar -->
+<path d="M150 247c-8-105 41-171 107-171 91 0 128 73 105 182-9-35-33-67-61-83-35-20-72-27-107-5-21 13-35 38-44 77z" fill="#07101b"/>
+<path d="M201 154c28-38 84-41 116-9 23 23 31 62 20 100-11 40-41 73-80 75-45 2-79-32-90-77-8-34 4-68 34-89z" fill="#d8b3a3"/>
+<!-- dark wavy hair and blue accents -->
+<g fill="none" stroke-linecap="round">
+  <path d="M166 201c-45 61-25 118 8 151" stroke="#07111d" stroke-width="32"/>
+  <path d="M181 151c-55 42-63 122-38 174" stroke="#0a1420" stroke-width="27"/>
+  <path d="M205 117c-34 49-21 93-50 132" stroke="#07111d" stroke-width="26"/>
+  <path d="M249 104c-34 42-17 76-45 123" stroke="#09131f" stroke-width="29"/>
+  <path d="M292 108c37 43 21 86 52 130" stroke="#07111d" stroke-width="29"/>
+  <path d="M329 137c46 50 33 112 14 157" stroke="#09131f" stroke-width="27"/>
+  <path d="M187 150c-25 56-3 88-31 137" stroke="url(#cyan)" stroke-width="7" opacity=".9"/>
+  <path d="M246 112c-19 46 1 78-24 116" stroke="#2a9fe0" stroke-width="7" opacity=".85"/>
+  <path d="M318 132c26 47 9 88 30 126" stroke="#4ed4ff" stroke-width="6" opacity=".8"/>
+</g>
+<!-- face -->
+<path d="M213 226c14-12 31-13 44-2" fill="none" stroke="#583c3d" stroke-width="4" stroke-linecap="round"/>
+<path d="M274 225c14-10 31-9 42 3" fill="none" stroke="#583c3d" stroke-width="4" stroke-linecap="round"/>
+<ellipse cx="237" cy="229" rx="8" ry="9" fill="#36b7f0" filter="url(#glow)"/>
+<ellipse cx="294" cy="231" rx="8" ry="9" fill="#36b7f0" filter="url(#glow)"/>
+<path d="M266 235c-5 17-8 28-2 34" fill="none" stroke="#a67f76" stroke-width="3" stroke-linecap="round"/>
+<path d="M244 283c14 10 33 10 48-1" fill="none" stroke="#81575e" stroke-width="4" stroke-linecap="round"/>
+<!-- tech collar -->
+<path d="M188 344c45-23 94-24 139-2 22 11 41 31 54 67H137c12-32 28-53 51-65z" fill="#0a1825" stroke="#2a6383" stroke-width="4"/>
+<path d="M222 336l35 39 37-39" fill="none" stroke="url(#copper)" stroke-width="5"/>
+<!-- Superior current mark -->
+<g fill="none" stroke="url(#cyan)" stroke-width="7" stroke-linecap="round" filter="url(#glow)">
+  <path d="M165 422c47-30 72 25 119-7 45-30 72 20 103-5"/>
+  <path d="M175 442c38-23 68 20 105-4 41-27 67 15 91-3"/>
+</g>
+<circle cx="404" cy="109" r="11" fill="#d88b4d"/>
+<path d="M404 82v-14M404 150v-14M377 109h-14M445 109h-14" stroke="#d88b4d" stroke-width="4" stroke-linecap="round" opacity=".8"/>
+</svg>

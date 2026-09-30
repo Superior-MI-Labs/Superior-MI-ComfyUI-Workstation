@@ -1,0 +1,46 @@
+{
+  "name": "Superior MI Labs - ComfyUI Workstation",
+  "version": "3.0.3",
+  "built": "2026-09-30",
+  "kisha_reference_assets": [
+    "01_kisha_field_researcher_reference_sheet.png",
+    "02_kisha_data_analyst_reference_sheet.png",
+    "03_kisha_digital_interface_reference_sheet.png",
+    "04_kisha_reflection_mode_reference_sheet.png",
+    "05_kisha_explorer_reference_sheet.png",
+    "06_kisha_everyday_lab_reference_sheet.png"
+  ],
+  "principles": [
+    "single runtime authority",
+    "canonical model storage",
+    "observable state",
+    "license-aware curated downloads",
+    "non-destructive maintenance",
+    "one blueprint registry",
+    "beginner surface over canonical ComfyUI execution"
+  ],
+  "changes": [
+    "professional five-surface navigation: Create, Library, Activity, Advanced, Help",
+    "unified Blueprint + Pack + Character + Creation architecture",
+    "Starter Packs for one-click image, character, video, creator-suite and H3 experimental dependencies",
+    "ComfyUI workflow userdata import and one-click Workstation bridge",
+    "live generation progress with websocket events and output preview",
+    "explicit Image-to-Video source input contract for Wan2.2 beginner video",
+    "21 expandable Superior MI Characters with user-defined collections/folders",
+    "scroll-safe detail panes and advanced components moved out of the beginner path"
+  ],
+  "character_count": 21,
+  "character_system": {
+    "persistent_root": "~/Models/Media/Characters",
+    "discovery": "recursive image scan",
+    "name_fallback": "image filename",
+    "metadata": "optional same-name JSON sidecar",
+    "bundled_groups": [
+      "Human",
+      "Neko",
+      "Furry"
+    ]
+  },
+  "architecture": "blueprints-packs-characters",
+  "update_repository": "https://github.com/Superior-MI-Labs/Superior-MI-ComfyUI-Workstation"
+}

@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "id": "kaia-mistral",
+  "name": "Kaia Mistral",
+  "collection": "Superior MI Characters",
+  "kind": "Neko",
+  "role": "Exploration Scout",
+  "identity": "woman",
+  "pronouns": "she/her",
+  "body_type": "athletic",
+  "description": "Kaia Mistral, a neko character in the Superior MI Labs reference-character starter collection.",
+  "tags": [
+    "neko",
+    "exploration",
+    "scout"
+  ],
+  "reference_type": "character-sheet",
+  "license": "Bundled with Superior MI Labs ComfyUI Workstation for use as a local reference asset."
+}
