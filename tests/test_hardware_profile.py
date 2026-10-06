@@ -7,6 +7,7 @@ sys.path.insert(0, str(APP))
 from core.hardware import (
     observe_gpus,
     parse_lspci_gpus,
+    parse_os_release_text,
     parse_macos_displays_json,
     parse_nvidia_smi_csv,
     parse_windows_video_json,
@@ -15,13 +16,21 @@ from core.hardware import (
 
 def test_nvidia_smi_parser_captures_multiple_devices():
     rows = parse_nvidia_smi_csv(
-        "NVIDIA RTX A, 12288, 555.10\n"
-        "NVIDIA RTX B, 24576, 555.10\n"
+        "NVIDIA RTX A, 12288, 555.10, 8.9\n"
+        "NVIDIA RTX B, 24576, 555.10, 9.0\n"
     )
     assert len(rows) == 2
     assert rows[0].vendor == "NVIDIA"
     assert rows[0].vram_bytes == 12288 * 1024**2
     assert rows[0].backend_candidates == ("cuda",)
+    assert rows[0].compute_capability == "8.9"
+
+
+def test_os_release_parser_preserves_distribution_identity():
+    values = parse_os_release_text('NAME="Linux Mint"\nVERSION_ID="22.3"\nPRETTY_NAME="Linux Mint 22.3"\n')
+    assert values["NAME"] == "Linux Mint"
+    assert values["VERSION_ID"] == "22.3"
+    assert values["PRETTY_NAME"] == "Linux Mint 22.3"
 
 
 def test_linux_lspci_discovers_amd_and_intel_without_claiming_runtime():
