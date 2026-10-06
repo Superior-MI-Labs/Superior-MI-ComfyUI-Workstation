@@ -191,6 +191,7 @@ def _merge_backend(existing: str, candidate_backend: str) -> str | None:
 
 def _select_candidates(
     request: CapabilityRequest,
+    inventory: InstalledInventory,
     candidates: tuple[ImplementationCandidate, ...],
     assessments: dict[str, CandidateAssessment],
 ) -> tuple[str, ...]:
@@ -393,7 +394,7 @@ def resolve_capabilities(
         for candidate in ordered
     }
 
-    selected_ids = _select_candidates(request, ordered, assessments)
+    selected_ids = _select_candidates(request, inventory, ordered, assessments)
     selected_set = set(selected_ids)
     selected = tuple(candidate for candidate in ordered if candidate.id in selected_set)
 
