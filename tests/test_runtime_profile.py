@@ -29,12 +29,14 @@ def fake_torch(*, cuda=False, hip=None, cuda_version=None, xpu=False, mps=False)
 def test_runtime_classifies_cuda():
     runtime = observe_runtime(torch_module=fake_torch(cuda=True, cuda_version="13.0"))
     assert runtime.compute_backend == "cuda"
+    assert runtime.backend_version == "13.0"
     assert runtime.torch_version == "9.9.test"
 
 
 def test_runtime_distinguishes_rocm_from_torch_cuda_compat_api():
     runtime = observe_runtime(torch_module=fake_torch(cuda=True, hip="7.0"))
     assert runtime.compute_backend == "rocm"
+    assert runtime.backend_version == "7.0"
 
 
 def test_runtime_classifies_xpu_and_mps():
