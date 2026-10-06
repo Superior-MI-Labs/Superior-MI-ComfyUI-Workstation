@@ -93,6 +93,8 @@ def assess_candidate(
     reused_assets = tuple(sorted(asset.id for asset in candidate.assets if asset.id in inventory.asset_ids))
     missing_assets = tuple(asset for asset in candidate.assets if asset.id not in inventory.asset_ids)
     required_download = sum(max(0, asset.size_bytes) for asset in missing_assets)
+    if missing_assets:
+        setup.append(f"{len(missing_assets)} asset(s) must be downloaded.")
 
     if request.storage_budget_bytes is not None and required_download > request.storage_budget_bytes:
         rejection.append(
@@ -158,7 +160,6 @@ def _choice_key(choice: _Choice) -> tuple:
         choice.stability_score,
         -choice.required_download_bytes,
         -len(choice.ids),
-        tuple(reversed(choice.ids)),
     )
 
 
@@ -361,7 +362,14 @@ def resolve_capabilities(
     inventory: InstalledInventory,
     candidates: Iterable[ImplementationCandidate],
 ) -> ResolutionResult:
+    if not request.capabilities:
+        raise ValueError("At least one capability is required.")
+
     ordered = tuple(sorted(candidates, key=lambda candidate: candidate.id))
+    ids = [candidate.id for candidate in ordered]
+    if len(ids) != len(set(ids)):
+        raise ValueError("Implementation candidate IDs must be unique.")
+
     assessments = {
         candidate.id: assess_candidate(request, hardware, runtime, inventory, candidate)
         for candidate in ordered
