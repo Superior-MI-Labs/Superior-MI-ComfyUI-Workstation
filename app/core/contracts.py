@@ -107,3 +107,59 @@ class ActionPlan:
     @property
     def requires_approval(self) -> bool:
         return any(action.requires_approval for action in self.actions)
+
+
+@dataclass(frozen=True)
+class AssetRequirement:
+    id: str
+    size_bytes: int = 0
+
+
+@dataclass(frozen=True)
+class InstalledInventory:
+    asset_ids: frozenset[str] = frozenset()
+    package_ids: frozenset[str] = frozenset()
+
+
+@dataclass(frozen=True)
+class ImplementationCandidate:
+    id: str
+    title: str
+    capabilities: tuple[str, ...]
+    backend: str = "cpu"
+    platforms: tuple[str, ...] = ()
+    architectures: tuple[str, ...] = ()
+    min_vram_bytes: int = 0
+    min_ram_bytes: int = 0
+    assets: tuple[AssetRequirement, ...] = ()
+    packages: tuple[str, ...] = ()
+    blueprint_id: str = ""
+    execution_mode: str = "local"
+    stability: str = "stable"
+    evidence_score: int = 0
+    preference_scores: Mapping[str, int] = field(default_factory=dict)
+    license_status: str = "open"
+
+
+@dataclass(frozen=True)
+class CandidateAssessment:
+    candidate_id: str
+    status: str
+    rejection_reasons: tuple[str, ...] = ()
+    setup_reasons: tuple[str, ...] = ()
+    warnings: tuple[str, ...] = ()
+    required_download_bytes: int = 0
+    reused_assets: tuple[str, ...] = ()
+
+
+@dataclass(frozen=True)
+class ResolutionResult:
+    requested_capabilities: tuple[str, ...]
+    selected_candidate_ids: tuple[str, ...]
+    assessments: tuple[CandidateAssessment, ...]
+    plan: ActionPlan | None
+    unresolved_capabilities: tuple[str, ...] = ()
+
+    @property
+    def resolved(self) -> bool:
+        return not self.unresolved_capabilities and self.plan is not None
