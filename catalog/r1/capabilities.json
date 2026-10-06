@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "capabilities": [
+    {
+      "id": "image.generate",
+      "title": "Generate Image",
+      "description": "Generate an image from user-controlled inputs such as text and workflow parameters.",
+      "input_media": [],
+      "output_media": ["image"]
+    },
+    {
+      "id": "image.reference",
+      "title": "Reference-Guided Image",
+      "description": "Generate or transform an image using one or more generic image references.",
+      "input_media": ["image"],
+      "output_media": ["image"]
+    },
+    {
+      "id": "image.edit",
+      "title": "Edit Image",
+      "description": "Transform an existing image according to workflow inputs.",
+      "input_media": ["image"],
+      "output_media": ["image"]
+    },
+    {
+      "id": "video.image_to_video",
+      "title": "Image to Video",
+      "description": "Generate video using an image as an explicit source input.",
+      "input_media": ["image"],
+      "output_media": ["video"]
+    },
+    {
+      "id": "video.generate",
+      "title": "Generate Video",
+      "description": "Generate video from workflow inputs without a domain-specific experience assumption.",
+      "input_media": [],
+      "output_media": ["video"]
+    },
+    {
+      "id": "audio.generate",
+      "title": "Generate Audio",
+      "description": "Generate audio from workflow inputs.",
+      "input_media": [],
+      "output_media": ["audio"]
+    },
+    {
+      "id": "image.upscale",
+      "title": "Upscale Image",
+      "description": "Increase image resolution using a workflow implementation.",
+      "input_media": ["image"],
+      "output_media": ["image"]
+    }
+  ]
+}
