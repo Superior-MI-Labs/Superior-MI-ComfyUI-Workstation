@@ -52,6 +52,15 @@ class RuntimeProfile:
 
 
 @dataclass(frozen=True)
+class CapabilityDefinition:
+    id: str
+    title: str
+    description: str = ""
+    input_media: tuple[str, ...] = ()
+    output_media: tuple[str, ...] = ()
+
+
+@dataclass(frozen=True)
 class CapabilityRequest:
     capabilities: tuple[str, ...]
     local_only: bool = True
