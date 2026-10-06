@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from fractions import Fraction
 from typing import Iterable
 
 from .contracts import (
@@ -149,14 +150,17 @@ class _Choice:
     evidence_score: int
     stability_score: int
     required_download_bytes: int
+    missing_asset_ids: frozenset[str]
 
 
 def _choice_key(choice: _Choice) -> tuple:
-    # Higher values are better except download bytes and candidate count.
+    # Scores are candidate-level catalog observations. Normalize them so adding
+    # more packages cannot improve rank merely by accumulating score.
+    count = max(1, len(choice.ids))
     return (
-        choice.preference_score,
-        choice.evidence_score,
-        choice.stability_score,
+        Fraction(choice.preference_score, count),
+        Fraction(choice.evidence_score, count),
+        Fraction(choice.stability_score, count),
         -choice.setup_count,
         -choice.required_download_bytes,
         -len(choice.ids),
@@ -203,7 +207,7 @@ def _select_candidates(
     viable.sort(key=lambda candidate: candidate.id)
 
     states: dict[tuple[int, str], _Choice] = {
-        (0, ""): _Choice((), 0, "", 0, 0, 0, 0, 0)
+        (0, ""): _Choice((), 0, "", 0, 0, 0, 0, 0, frozenset())
     }
 
     for candidate in viable:
@@ -223,6 +227,17 @@ def _select_candidates(
             if new_mask == prior.mask:
                 continue
             ids = tuple(sorted((*prior.ids, candidate.id)))
+            missing_assets = tuple(
+                asset for asset in candidate.assets if asset.id not in inventory.asset_ids
+            )
+            incremental_download = sum(
+                max(0, asset.size_bytes)
+                for asset in missing_assets
+                if asset.id not in prior.missing_asset_ids
+            )
+            missing_asset_ids = prior.missing_asset_ids.union(
+                asset.id for asset in missing_assets
+            )
             choice = _Choice(
                 ids=ids,
                 mask=new_mask,
@@ -232,7 +247,8 @@ def _select_candidates(
                 + int(candidate.preference_scores.get(request.quality_priority, 0)),
                 evidence_score=prior.evidence_score + max(0, int(candidate.evidence_score)),
                 stability_score=prior.stability_score + _STABILITY.get(candidate.stability, 0),
-                required_download_bytes=prior.required_download_bytes + assessment.required_download_bytes,
+                required_download_bytes=prior.required_download_bytes + incremental_download,
+                missing_asset_ids=frozenset(missing_asset_ids),
             )
             key = (new_mask, backend)
             if _better(choice, states.get(key)):
