@@ -79,7 +79,8 @@ def parse_lspci_gpus(text: str) -> tuple[GPUProfile, ...]:
         else:
             vendor = "Unknown"
         model = line.split(":", 2)[-1].strip()
-        gpus.append(GPUProfile(vendor=vendor, model=model))
+        candidates = {"NVIDIA": ("cuda",), "AMD": ("rocm",), "Intel": ("xpu",)}.get(vendor, ())
+        gpus.append(GPUProfile(vendor=vendor, model=model, backend_candidates=candidates))
     return tuple(gpus)
 
 
@@ -126,12 +127,14 @@ def parse_windows_video_json(text: str) -> tuple[GPUProfile, ...]:
             vram = int(row.get("AdapterRAM") or 0)
         except (TypeError, ValueError):
             vram = 0
+        candidates = {"NVIDIA": ("cuda",), "AMD": ("rocm",), "Intel": ("xpu",)}.get(vendor, ())
         gpus.append(
             GPUProfile(
                 vendor=vendor,
                 model=model,
                 vram_bytes=vram,
                 driver=str(row.get("DriverVersion") or ""),
+                backend_candidates=candidates,
             )
         )
     return tuple(gpus)
@@ -188,19 +191,7 @@ def observe_gpus(system: str | None = None, run_text: RunText = _run_text) -> tu
         if nvidia:
             pci = tuple(gpu for gpu in pci if gpu.vendor != "NVIDIA")
 
-        enriched = []
-        for gpu in pci:
-            candidates = ()
-            if gpu.vendor == "AMD":
-                candidates = ("rocm",)
-            elif gpu.vendor == "Intel":
-                candidates = ("xpu",)
-            elif gpu.vendor == "NVIDIA":
-                candidates = ("cuda",)
-            if candidates:
-                gpu = GPUProfile(**{**gpu.__dict__, "backend_candidates": candidates})
-            enriched.append(gpu)
-        return _merge_gpus(nvidia, enriched)
+        return _merge_gpus(nvidia, pci)
 
     return ()
 
