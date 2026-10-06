@@ -21,7 +21,7 @@ def test_nvidia_smi_parser_captures_multiple_devices():
     assert len(rows) == 2
     assert rows[0].vendor == "NVIDIA"
     assert rows[0].vram_bytes == 12288 * 1024**2
-    assert rows[0].compute_backend == "cuda"
+    assert rows[0].backend_candidates == ("cuda",)
 
 
 def test_linux_lspci_discovers_amd_and_intel_without_claiming_runtime():
@@ -30,15 +30,13 @@ def test_linux_lspci_discovers_amd_and_intel_without_claiming_runtime():
         "00:02.0 VGA compatible controller: Intel Corporation Arc Example\n"
     )
     assert [gpu.vendor for gpu in rows] == ["AMD", "Intel"]
-    assert all(gpu.compute_backend == "" for gpu in rows)
+    assert [gpu.backend_candidates for gpu in rows] == [(), ()]
 
 
-def test_linux_backend_availability_is_observed_separately_from_device_presence():
+def test_linux_gpu_profile_reports_candidate_not_active_runtime():
     outputs = {
         ("nvidia-smi", "--query-gpu=name,memory.total,driver_version", "--format=csv,noheader,nounits"): "",
         ("lspci",): "03:00.0 VGA compatible controller: Advanced Micro Devices, Inc. [AMD/ATI] Navi Example",
-        ("rocminfo",): "ROCk module is loaded",
-        ("xpu-smi", "discovery", "-j"): "",
     }
 
     def fake_run(command):
@@ -47,7 +45,7 @@ def test_linux_backend_availability_is_observed_separately_from_device_presence(
     rows = observe_gpus(system="Linux", run_text=fake_run)
     assert len(rows) == 1
     assert rows[0].vendor == "AMD"
-    assert rows[0].compute_backend == "rocm"
+    assert rows[0].backend_candidates == ("rocm",)
 
 
 def test_macos_system_profiler_parser_marks_apple_mps_candidate():
@@ -56,7 +54,7 @@ def test_macos_system_profiler_parser_marks_apple_mps_candidate():
     )
     assert len(rows) == 1
     assert rows[0].vendor == "Apple"
-    assert rows[0].compute_backend == "mps"
+    assert rows[0].backend_candidates == ("mps",)
     assert rows[0].vram_bytes == 16 * 1024**3
 
 
@@ -68,4 +66,4 @@ def test_windows_video_controller_parser_is_data_only():
     assert [gpu.vendor for gpu in rows] == ["Intel", "NVIDIA"]
     assert rows[0].driver == "1.2.3"
     # Device detection alone does not prove XPU/CUDA runtime health on Windows.
-    assert all(gpu.compute_backend == "" for gpu in rows)
+    assert all(gpu.backend_candidates == () for gpu in rows)
