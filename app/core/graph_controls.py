@@ -46,10 +46,17 @@ def _schema_for_input(info: Mapping[str, Any], input_name: str):
 
 
 def _is_connection(value: Any, prompt: Mapping[str, Any]) -> bool:
+    """Recognize the Comfy API connection tuple [node_id, output_slot].
+
+    API prompt node ids are JSON object keys, so connection ids arrive as
+    strings in normal serialized workflows. We intentionally recognize the
+    shape even if the source node is stale/missing: a broken socket reference
+    must never be reinterpreted as an editable scalar Workstation control.
+    """
     return (
         isinstance(value, list)
         and len(value) == 2
-        and str(value[0]) in {str(key) for key in prompt}
+        and isinstance(value[0], str)
         and isinstance(value[1], int)
     )
 
