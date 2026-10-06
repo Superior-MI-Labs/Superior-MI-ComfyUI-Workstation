@@ -10,7 +10,7 @@ class GPUProfile:
     model: str
     vram_bytes: int = 0
     driver: str = ""
-    compute_backend: str = ""
+    backend_candidates: tuple[str, ...] = ()
     compute_capability: str = ""
     supported_dtypes: tuple[str, ...] = ()
 
