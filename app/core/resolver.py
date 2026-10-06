@@ -154,10 +154,10 @@ class _Choice:
 def _choice_key(choice: _Choice) -> tuple:
     # Higher values are better except download bytes and candidate count.
     return (
-        -choice.setup_count,
         choice.preference_score,
         choice.evidence_score,
         choice.stability_score,
+        -choice.setup_count,
         -choice.required_download_bytes,
         -len(choice.ids),
     )
@@ -220,6 +220,8 @@ def _select_candidates(
             if backend is None:
                 continue
             new_mask = prior.mask | coverage
+            if new_mask == prior.mask:
+                continue
             ids = tuple(sorted((*prior.ids, candidate.id)))
             choice = _Choice(
                 ids=ids,
