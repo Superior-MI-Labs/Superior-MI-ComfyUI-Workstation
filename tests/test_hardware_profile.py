@@ -30,7 +30,7 @@ def test_linux_lspci_discovers_amd_and_intel_without_claiming_runtime():
         "00:02.0 VGA compatible controller: Intel Corporation Arc Example\n"
     )
     assert [gpu.vendor for gpu in rows] == ["AMD", "Intel"]
-    assert [gpu.backend_candidates for gpu in rows] == [(), ()]
+    assert [gpu.backend_candidates for gpu in rows] == [("rocm",), ("xpu",)]
 
 
 def test_linux_gpu_profile_reports_candidate_not_active_runtime():
@@ -66,4 +66,4 @@ def test_windows_video_controller_parser_is_data_only():
     assert [gpu.vendor for gpu in rows] == ["Intel", "NVIDIA"]
     assert rows[0].driver == "1.2.3"
     # Device detection alone does not prove XPU/CUDA runtime health on Windows.
-    assert all(gpu.backend_candidates == () for gpu in rows)
+    assert [gpu.backend_candidates for gpu in rows] == [("xpu",), ("cuda",)]
