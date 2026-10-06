@@ -39,6 +39,17 @@ def _bytes_from_memory_label(value: str) -> int:
     return int(amount * scale)
 
 
+def parse_os_release_text(text: str) -> dict[str, str]:
+    values: dict[str, str] = {}
+    for raw in text.splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        values[key] = value.strip().strip('"').strip("'")
+    return values
+
+
 def parse_nvidia_smi_csv(text: str) -> tuple[GPUProfile, ...]:
     gpus = []
     for line in text.splitlines():
@@ -48,6 +59,7 @@ def parse_nvidia_smi_csv(text: str) -> tuple[GPUProfile, ...]:
         if len(parts) < 3:
             continue
         name, memory_mib, driver = parts[:3]
+        compute_capability = parts[3] if len(parts) > 3 else ""
         try:
             vram = int(float(memory_mib) * 1024**2)
         except ValueError:
@@ -59,6 +71,7 @@ def parse_nvidia_smi_csv(text: str) -> tuple[GPUProfile, ...]:
                 vram_bytes=vram,
                 driver=driver,
                 backend_candidates=("cuda",),
+                compute_capability=compute_capability,
             )
         )
     return tuple(gpus)
@@ -180,9 +193,15 @@ def observe_gpus(system: str | None = None, run_text: RunText = _run_text) -> tu
     if system == "Linux":
         nvidia_raw = run_text([
             "nvidia-smi",
-            "--query-gpu=name,memory.total,driver_version",
+            "--query-gpu=name,memory.total,driver_version,compute_cap",
             "--format=csv,noheader,nounits",
         ])
+        if not nvidia_raw:
+            nvidia_raw = run_text([
+                "nvidia-smi",
+                "--query-gpu=name,memory.total,driver_version",
+                "--format=csv,noheader,nounits",
+            ])
         nvidia = parse_nvidia_smi_csv(nvidia_raw)
 
         pci = parse_lspci_gpus(run_text(["lspci"]))
@@ -277,12 +296,24 @@ def observe_hardware(
     cpu_model = _linux_cpu_model() if system == "Linux" else platform_module.processor()
     total_memory, available_memory = _memory_snapshot()
 
+    distribution = ""
+    os_version = platform_module.release()
+    if system == "Linux":
+        try:
+            os_release = parse_os_release_text(Path("/etc/os-release").read_text(encoding="utf-8", errors="replace"))
+        except OSError:
+            os_release = {}
+        distribution = os_release.get("PRETTY_NAME") or os_release.get("NAME") or ""
+        os_version = os_release.get("VERSION_ID") or platform_module.release()
+
     paths = list(storage_paths or (Path.home(),))
     storage = tuple(item for item in (_storage_profile(path) for path in paths) if item is not None)
 
     return HardwareProfile(
         platform=system.lower(),
         architecture=machine,
+        os_version=os_version,
+        distribution=distribution,
         cpu_model=cpu_model,
         logical_cpu_count=logical,
         physical_cpu_count=physical,
