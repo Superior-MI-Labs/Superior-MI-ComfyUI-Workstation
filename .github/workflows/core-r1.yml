@@ -1,0 +1,38 @@
+name: Workstation Core R1 CI
+
+on:
+  push:
+    branches:
+      - architecture/workstation-core-r1
+  pull_request:
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    env:
+      PYTHONPATH: app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install test runner
+        run: python -m pip install --upgrade pip pytest
+      - name: Compile Python
+        run: python -m compileall -q app tests
+      - name: Validate JSON assets
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          paths = list(Path("catalog").rglob("*.json")) + list(Path("preset_library").rglob("*.json"))
+          for path in paths:
+              json.loads(path.read_text(encoding="utf-8"))
+          print(f"validated_json={len(paths)}")
+          PY
+      - name: Run tests
+        run: python -m pytest -q
