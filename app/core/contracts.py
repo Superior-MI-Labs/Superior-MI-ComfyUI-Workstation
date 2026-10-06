@@ -28,6 +28,8 @@ class StorageProfile:
 class HardwareProfile:
     platform: str
     architecture: str
+    os_version: str = ""
+    distribution: str = ""
     cpu_model: str = ""
     logical_cpu_count: int = 0
     physical_cpu_count: int = 0
@@ -42,6 +44,7 @@ class RuntimeProfile:
     python_version: str = ""
     torch_version: str = ""
     compute_backend: str = ""
+    backend_version: str = ""
     comfyui_version: str = ""
     comfyui_url: str = ""
     installed_node_types: frozenset[str] = frozenset()
