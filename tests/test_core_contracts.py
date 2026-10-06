@@ -20,10 +20,10 @@ def test_hardware_is_typed_data_not_ui_state():
         cpu_model="Example CPU",
         logical_cpu_count=16,
         memory_total_bytes=32 * 1024**3,
-        gpus=(GPUProfile(vendor="NVIDIA", model="Example GPU", vram_bytes=12 * 1024**3, compute_backend="cuda"),),
+        gpus=(GPUProfile(vendor="NVIDIA", model="Example GPU", vram_bytes=12 * 1024**3, backend_candidates=("cuda",)),),
     )
     assert hw.gpus[0].vram_bytes == 12 * 1024**3
-    assert hw.gpus[0].compute_backend == "cuda"
+    assert hw.gpus[0].backend_candidates == ("cuda",)
 
 
 def test_capability_request_does_not_depend_on_ai_provider():
