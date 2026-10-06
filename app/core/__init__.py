@@ -7,22 +7,42 @@ facts, and evidence.
 
 from .contracts import (
     ActionPlan,
+    AssetRequirement,
+    CandidateAssessment,
     CapabilityRequest,
-    GraphControl,
     GPUProfile,
+    GraphControl,
     HardwareProfile,
+    ImplementationCandidate,
+    InstalledInventory,
     PlanAction,
+    ResolutionResult,
     RuntimeProfile,
     StorageProfile,
 )
+from .graph_controls import GraphControlRegistry, derive_graph_controls
+from .hardware import observe_hardware
+from .resolver import assess_candidate, resolve_capabilities
+from .runtime_profile import observe_runtime
 
 __all__ = [
     "ActionPlan",
+    "AssetRequirement",
+    "CandidateAssessment",
     "CapabilityRequest",
-    "GraphControl",
     "GPUProfile",
+    "GraphControl",
+    "GraphControlRegistry",
     "HardwareProfile",
+    "ImplementationCandidate",
+    "InstalledInventory",
     "PlanAction",
+    "ResolutionResult",
     "RuntimeProfile",
     "StorageProfile",
+    "assess_candidate",
+    "derive_graph_controls",
+    "observe_hardware",
+    "observe_runtime",
+    "resolve_capabilities",
 ]
