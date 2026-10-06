@@ -46,14 +46,23 @@ def observe_runtime(
     if torch_module is None:
         torch_version = ""
         backend = "cpu"
+        backend_version = ""
     else:
         torch_version = str(getattr(torch_module, "__version__", ""))
         backend = _torch_backend(torch_module)
+        version = getattr(torch_module, "version", None)
+        if backend == "rocm":
+            backend_version = str(getattr(version, "hip", "") or "")
+        elif backend == "cuda":
+            backend_version = str(getattr(version, "cuda", "") or "")
+        else:
+            backend_version = ""
 
     return RuntimeProfile(
         python_version=platform.python_version(),
         torch_version=torch_version,
         compute_backend=backend,
+        backend_version=backend_version,
         comfyui_version=comfyui_version,
         comfyui_url=comfyui_url,
         installed_node_types=frozenset(str(x) for x in installed_node_types),
