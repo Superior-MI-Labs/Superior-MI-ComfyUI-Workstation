@@ -58,7 +58,7 @@ def parse_nvidia_smi_csv(text: str) -> tuple[GPUProfile, ...]:
                 model=name,
                 vram_bytes=vram,
                 driver=driver,
-                compute_backend="cuda",
+                backend_candidates=("cuda",),
             )
         )
     return tuple(gpus)
@@ -103,7 +103,7 @@ def parse_macos_displays_json(text: str) -> tuple[GPUProfile, ...]:
                 vendor=vendor,
                 model=model,
                 vram_bytes=vram,
-                compute_backend="mps" if vendor == "Apple" else "",
+                backend_candidates=("mps",) if vendor == "Apple" else (),
             )
         )
     return tuple(gpus)
@@ -151,8 +151,8 @@ def _merge_gpus(*groups: Iterable[GPUProfile]) -> tuple[GPUProfile, ...]:
                 merged[key] = gpu
                 continue
             # Prefer the observation with more concrete driver/VRAM/backend data.
-            old_score = sum(bool(x) for x in (existing.vram_bytes, existing.driver, existing.compute_backend))
-            new_score = sum(bool(x) for x in (gpu.vram_bytes, gpu.driver, gpu.compute_backend))
+            old_score = sum(bool(x) for x in (existing.vram_bytes, existing.driver, existing.backend_candidates))
+            new_score = sum(bool(x) for x in (gpu.vram_bytes, gpu.driver, gpu.backend_candidates))
             if new_score > old_score:
                 merged[key] = gpu
     return tuple(merged.values())
@@ -188,14 +188,17 @@ def observe_gpus(system: str | None = None, run_text: RunText = _run_text) -> tu
         if nvidia:
             pci = tuple(gpu for gpu in pci if gpu.vendor != "NVIDIA")
 
-        amd_backend = bool(run_text(["rocminfo"]))
-        intel_backend = bool(run_text(["xpu-smi", "discovery", "-j"]))
         enriched = []
         for gpu in pci:
-            if gpu.vendor == "AMD" and amd_backend:
-                gpu = GPUProfile(**{**gpu.__dict__, "compute_backend": "rocm"})
-            elif gpu.vendor == "Intel" and intel_backend:
-                gpu = GPUProfile(**{**gpu.__dict__, "compute_backend": "xpu"})
+            candidates = ()
+            if gpu.vendor == "AMD":
+                candidates = ("rocm",)
+            elif gpu.vendor == "Intel":
+                candidates = ("xpu",)
+            elif gpu.vendor == "NVIDIA":
+                candidates = ("cuda",)
+            if candidates:
+                gpu = GPUProfile(**{**gpu.__dict__, "backend_candidates": candidates})
             enriched.append(gpu)
         return _merge_gpus(nvidia, enriched)
 
