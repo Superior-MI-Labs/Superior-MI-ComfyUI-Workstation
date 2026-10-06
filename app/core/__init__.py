@@ -9,6 +9,7 @@ from .contracts import (
     ActionPlan,
     AssetRequirement,
     CandidateAssessment,
+    CapabilityDefinition,
     CapabilityRequest,
     GPUProfile,
     GraphControl,
@@ -22,6 +23,12 @@ from .contracts import (
 )
 from .graph_controls import GraphControlRegistry, derive_graph_controls
 from .hardware import observe_hardware
+from .registry import (
+    CapabilityRegistry,
+    ImplementationRegistry,
+    load_capability_registry,
+    load_implementation_registry,
+)
 from .resolver import assess_candidate, resolve_capabilities
 from .runtime_profile import observe_runtime
 
@@ -29,12 +36,15 @@ __all__ = [
     "ActionPlan",
     "AssetRequirement",
     "CandidateAssessment",
+    "CapabilityDefinition",
+    "CapabilityRegistry",
     "CapabilityRequest",
     "GPUProfile",
     "GraphControl",
     "GraphControlRegistry",
     "HardwareProfile",
     "ImplementationCandidate",
+    "ImplementationRegistry",
     "InstalledInventory",
     "PlanAction",
     "ResolutionResult",
@@ -42,6 +52,8 @@ __all__ = [
     "StorageProfile",
     "assess_candidate",
     "derive_graph_controls",
+    "load_capability_registry",
+    "load_implementation_registry",
     "observe_hardware",
     "observe_runtime",
     "resolve_capabilities",
