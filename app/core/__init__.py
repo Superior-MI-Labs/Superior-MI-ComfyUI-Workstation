@@ -6,6 +6,7 @@ facts, and evidence.
 """
 
 from .contracts import (
+    ActionExecution,
     ActionPlan,
     AssetRequirement,
     CandidateAssessment,
@@ -17,10 +18,13 @@ from .contracts import (
     ImplementationCandidate,
     InstalledInventory,
     PlanAction,
+    PlanApproval,
+    PlanExecutionResult,
     ResolutionResult,
     RuntimeProfile,
     StorageProfile,
 )
+from .executor import PlanExecutor, approval_for, fingerprint_action, fingerprint_plan
 from .graph_controls import GraphControlRegistry, derive_graph_controls
 from .hardware import observe_hardware
 from .registry import (
@@ -33,6 +37,7 @@ from .resolver import assess_candidate, resolve_capabilities
 from .runtime_profile import observe_runtime
 
 __all__ = [
+    "ActionExecution",
     "ActionPlan",
     "AssetRequirement",
     "CandidateAssessment",
@@ -47,11 +52,17 @@ __all__ = [
     "ImplementationRegistry",
     "InstalledInventory",
     "PlanAction",
+    "PlanApproval",
+    "PlanExecutionResult",
+    "PlanExecutor",
     "ResolutionResult",
     "RuntimeProfile",
     "StorageProfile",
+    "approval_for",
     "assess_candidate",
     "derive_graph_controls",
+    "fingerprint_action",
+    "fingerprint_plan",
     "load_capability_registry",
     "load_implementation_registry",
     "observe_hardware",
