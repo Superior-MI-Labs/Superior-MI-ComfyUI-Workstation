@@ -11,7 +11,7 @@ import comfy_integration
 
 def test_qwen_reference_blueprints_use_v3_autogrow_paths():
     bad = []
-    for path in (ROOT / "preset_library" / "Character" / "Qwen-Image-2.1").glob("*.json"):
+    for path in (ROOT / "preset_library" / "Reference" / "Qwen-Image-2.1").glob("*.json"):
         data = json.loads(path.read_text())
         for node_id, node in data.items():
             if not isinstance(node, dict) or node.get("class_type") != "TextEncodeQwenImage21":
@@ -21,22 +21,22 @@ def test_qwen_reference_blueprints_use_v3_autogrow_paths():
                     bad.append((path.name, node_id, name))
     assert not bad, bad
 
-def test_character_control_is_graph_derived():
-    caps = creation_helper.mode_capabilities("Character Image (Qwen Image 2.1)")
-    assert caps["character"] is True
+def test_reference_control_is_graph_derived():
+    caps = creation_helper.mode_capabilities("Reference Image (Qwen Image 2.1)")
+    assert caps["reference_image"] is True
     assert caps["reference_slots"] >= 1
     assert caps["source_image"] is False
     # Its latent geometry follows image_1, so arbitrary format selection is hidden.
     assert caps["format"] is False
 
-def test_text_modes_do_not_offer_character_control():
-    assert creation_helper.mode_capabilities("Text Image (Qwen Image 2.1)")["character"] is False
-    assert creation_helper.mode_capabilities("Text Image (FLUX.2 Klein 4B)")["character"] is False
+def test_text_modes_do_not_offer_reference_control():
+    assert creation_helper.mode_capabilities("Text Image (Qwen Image 2.1)")["reference_image"] is False
+    assert "character" not in creation_helper.mode_capabilities("Text Image (FLUX.2 Klein 4B)")
 
-def test_wan_i2v_offers_source_image_not_character():
+def test_wan_i2v_offers_source_image_not_reference():
     caps = creation_helper.mode_capabilities("Video from Image (Wan2.2 TI2V 5B)")
     assert caps["source_image"] is True
-    assert caps["character"] is False
+    assert caps["reference_image"] is False
     assert caps["format"] is True
 
 def test_runtime_adapter_rewrites_legacy_qwen_autogrow_input():

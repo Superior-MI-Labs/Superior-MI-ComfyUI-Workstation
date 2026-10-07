@@ -7,12 +7,12 @@ This repository is intentionally being released as a public beta before the majo
 ## Qualified in the current beta
 
 - Normal startup and Safe Mode
-- Qwen Image 2.1 character/reference creation
+- Qwen Image 2.1 reference-guided creation and editing
 - FLUX.2 Klein image creation path
 - Wan2.2 image-to-video setup path
 - Live Create progress and output preview
 - Blueprint-to-ComfyUI graph handoff
-- Expandable Character Library
+- Dynamic graph-derived reference inputs
 - Lazy-loaded Library/Activity/Advanced surfaces
 - Runtime input-contract validation against ComfyUI `/object_info`
 - Update checker and development-source sync
@@ -36,7 +36,7 @@ Keep one authority per domain:
 
 - Blueprints define creation recipes.
 - Packs define model/component dependencies.
-- Characters provide reusable identity/reference inputs.
+- Compatible workflows expose generic image-reference inputs directly from the graph.
 - ComfyUI remains the canonical execution graph/runtime.
 - The Workstation provides orchestration, onboarding, validation, and visibility.
 

@@ -1,0 +1,217 @@
+{
+  "schema_version": 1,
+  "note": "Core R1 starter candidates. recommended_vram_bytes is advisory only; min_vram_bytes remains zero until a hard minimum is qualified.",
+  "implementations": [
+    {
+      "id": "flux2-klein-4b-fast.image-generate",
+      "title": "FLUX.2 Klein 4B FP8",
+      "capabilities": [
+        "image.generate"
+      ],
+      "backend": "cuda",
+      "platforms": [
+        "linux"
+      ],
+      "architectures": [
+        "x86_64"
+      ],
+      "min_vram_bytes": 0,
+      "recommended_vram_bytes": 8589934592,
+      "assets": [
+        {
+          "id": "flux2-klein-4b-fp8.diffusion",
+          "size_bytes": 0
+        },
+        {
+          "id": "flux2-klein-4b.text-encoder-fp4",
+          "size_bytes": 0
+        },
+        {
+          "id": "flux2-klein-4b.vae",
+          "size_bytes": 0
+        }
+      ],
+      "packages": [],
+      "blueprint_id": "Image_FLUX2-Klein_01_Smoke_512",
+      "execution_mode": "local",
+      "stability": "beta",
+      "evidence_score": 50,
+      "preference_scores": {
+        "balanced": 90,
+        "quality": 80,
+        "speed": 100,
+        "storage": 95
+      },
+      "license_status": "open"
+    },
+    {
+      "id": "qwen-image-2.1-convrot.image-generate",
+      "title": "Qwen Image 2.1 ConvRot",
+      "capabilities": [
+        "image.generate"
+      ],
+      "backend": "cuda",
+      "platforms": [
+        "linux"
+      ],
+      "architectures": [
+        "x86_64"
+      ],
+      "min_vram_bytes": 0,
+      "recommended_vram_bytes": 12884901888,
+      "assets": [
+        {
+          "id": "qwen-image-2.1.diffusion-int8-convrot",
+          "size_bytes": 0
+        },
+        {
+          "id": "qwen-image-2.1.text-encoder-int8-convrot",
+          "size_bytes": 0
+        },
+        {
+          "id": "qwen-image-2.1.vae-bf16",
+          "size_bytes": 0
+        }
+      ],
+      "packages": [],
+      "blueprint_id": "Image_Qwen-Image-2.1_03_Normal_768_16step",
+      "execution_mode": "local",
+      "stability": "beta",
+      "evidence_score": 50,
+      "preference_scores": {
+        "balanced": 80,
+        "quality": 100,
+        "speed": 70,
+        "storage": 60
+      },
+      "license_status": "acknowledgement"
+    },
+    {
+      "id": "qwen-image-2.1-convrot.reference-edit",
+      "title": "Qwen Image 2.1 ConvRot Reference/Edit",
+      "capabilities": [
+        "image.reference",
+        "image.edit"
+      ],
+      "backend": "cuda",
+      "platforms": [
+        "linux"
+      ],
+      "architectures": [
+        "x86_64"
+      ],
+      "min_vram_bytes": 0,
+      "recommended_vram_bytes": 12884901888,
+      "assets": [
+        {
+          "id": "qwen-image-2.1.diffusion-int8-convrot",
+          "size_bytes": 0
+        },
+        {
+          "id": "qwen-image-2.1.text-encoder-int8-convrot",
+          "size_bytes": 0
+        },
+        {
+          "id": "qwen-image-2.1.vae-bf16",
+          "size_bytes": 0
+        }
+      ],
+      "packages": [],
+      "blueprint_id": "Reference_Qwen-Image-2.1_20_Single_Reference",
+      "execution_mode": "local",
+      "stability": "beta",
+      "evidence_score": 50,
+      "preference_scores": {
+        "balanced": 90,
+        "quality": 100,
+        "speed": 70,
+        "storage": 60
+      },
+      "license_status": "acknowledgement"
+    },
+    {
+      "id": "wan2.2-ti2v-5b.video-generate",
+      "title": "Wan2.2 TI2V 5B",
+      "capabilities": [
+        "video.generate"
+      ],
+      "backend": "cuda",
+      "platforms": [
+        "linux"
+      ],
+      "architectures": [
+        "x86_64"
+      ],
+      "min_vram_bytes": 0,
+      "recommended_vram_bytes": 12884901888,
+      "assets": [
+        {
+          "id": "wan2.2-ti2v-5b.diffusion-fp16",
+          "size_bytes": 0
+        },
+        {
+          "id": "wan2.2.umt5-fp8",
+          "size_bytes": 0
+        },
+        {
+          "id": "wan2.2.vae",
+          "size_bytes": 0
+        }
+      ],
+      "packages": [],
+      "blueprint_id": "Video_Wan2.2-TI2V-5B_01_Smoke_640x352_33f_10step",
+      "execution_mode": "local",
+      "stability": "beta",
+      "evidence_score": 40,
+      "preference_scores": {
+        "balanced": 80,
+        "quality": 90,
+        "speed": 70,
+        "storage": 70
+      },
+      "license_status": "open"
+    },
+    {
+      "id": "wan2.2-ti2v-5b.image-to-video",
+      "title": "Wan2.2 TI2V 5B Image to Video",
+      "capabilities": [
+        "video.image_to_video"
+      ],
+      "backend": "cuda",
+      "platforms": [
+        "linux"
+      ],
+      "architectures": [
+        "x86_64"
+      ],
+      "min_vram_bytes": 0,
+      "recommended_vram_bytes": 12884901888,
+      "assets": [
+        {
+          "id": "wan2.2-ti2v-5b.diffusion-fp16",
+          "size_bytes": 0
+        },
+        {
+          "id": "wan2.2.umt5-fp8",
+          "size_bytes": 0
+        },
+        {
+          "id": "wan2.2.vae",
+          "size_bytes": 0
+        }
+      ],
+      "packages": [],
+      "blueprint_id": "Video_Wan2.2-TI2V-5B_12_I2V_Smoke_480x832",
+      "execution_mode": "local",
+      "stability": "beta",
+      "evidence_score": 40,
+      "preference_scores": {
+        "balanced": 90,
+        "quality": 90,
+        "speed": 70,
+        "storage": 70
+      },
+      "license_status": "open"
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "note": "Trusted download identities used by Core R1. File sizes are intentionally omitted until exact upstream metadata is retained as evidence.",
+  "assets": [
+    {
+      "id": "flux2-klein-4b-fp8.diffusion",
+      "url": "https://huggingface.co/black-forest-labs/FLUX.2-klein-4b-fp8/resolve/main/flux-2-klein-4b-fp8.safetensors",
+      "relative_path": "diffusion_models"
+    },
+    {
+      "id": "flux2-klein-4b.text-encoder-fp4",
+      "url": "https://huggingface.co/Comfy-Org/vae-text-encorder-for-flux-klein-4b/resolve/main/split_files/text_encoders/qwen_3_4b_fp4_flux2.safetensors",
+      "relative_path": "text_encoders"
+    },
+    {
+      "id": "flux2-klein-4b.vae",
+      "url": "https://huggingface.co/Comfy-Org/vae-text-encorder-for-flux-klein-4b/resolve/main/split_files/vae/flux2-vae.safetensors",
+      "relative_path": "vae"
+    },
+    {
+      "id": "qwen-image-2.1.diffusion-int8-convrot",
+      "url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1/resolve/main/diffusion_models/qwen_image_2.1_int8_convrot.safetensors",
+      "relative_path": "diffusion_models"
+    },
+    {
+      "id": "qwen-image-2.1.text-encoder-int8-convrot",
+      "url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1/resolve/main/text_encoders/qwen3vl_8b_int8_convrot.safetensors",
+      "relative_path": "text_encoders"
+    },
+    {
+      "id": "qwen-image-2.1.vae-bf16",
+      "url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1/resolve/main/vae/qwen_image_2.1_vae_bf16.safetensors",
+      "relative_path": "vae"
+    },
+    {
+      "id": "wan2.2-ti2v-5b.diffusion-fp16",
+      "url": "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/diffusion_models/wan2.2_ti2v_5B_fp16.safetensors",
+      "relative_path": "diffusion_models"
+    },
+    {
+      "id": "wan2.2.umt5-fp8",
+      "url": "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+      "relative_path": "text_encoders"
+    },
+    {
+      "id": "wan2.2.vae",
+      "url": "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/vae/wan2.2_vae.safetensors",
+      "relative_path": "vae"
+    }
+  ]
+}

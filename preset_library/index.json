@@ -1,5 +1,5 @@
 {
-  "version": "1.1.0",
+  "version": "1.2.0",
   "presets": [
     {
       "id": "Image_FLUX2-Klein_01_Smoke_512",
@@ -13,7 +13,9 @@
         "flux-2-klein-4b-fp8.safetensors",
         "qwen_3_4b_fp4_flux2.safetensors",
         "flux2-vae.safetensors"
-      ]
+      ],
+      "stack_id": "flux2-klein-4b-fast",
+      "capability_id": "image.generate"
     },
     {
       "id": "Image_FLUX2-Klein_02_Portrait_768",
@@ -27,7 +29,9 @@
         "flux-2-klein-4b-fp8.safetensors",
         "qwen_3_4b_fp4_flux2.safetensors",
         "flux2-vae.safetensors"
-      ]
+      ],
+      "stack_id": "flux2-klein-4b-fast",
+      "capability_id": "image.generate"
     },
     {
       "id": "Image_FLUX2-Klein_03_Landscape_1024x576",
@@ -41,7 +45,9 @@
         "flux-2-klein-4b-fp8.safetensors",
         "qwen_3_4b_fp4_flux2.safetensors",
         "flux2-vae.safetensors"
-      ]
+      ],
+      "stack_id": "flux2-klein-4b-fast",
+      "capability_id": "image.generate"
     },
     {
       "id": "Mobile_FLUX2-Klein_04_Phone_Wallpaper_576x1024",
@@ -55,7 +61,9 @@
         "flux-2-klein-4b-fp8.safetensors",
         "qwen_3_4b_fp4_flux2.safetensors",
         "flux2-vae.safetensors"
-      ]
+      ],
+      "stack_id": "flux2-klein-4b-fast",
+      "capability_id": "image.generate"
     },
     {
       "id": "Image_FLUX2-Klein_05_Product_768",
@@ -69,7 +77,9 @@
         "flux-2-klein-4b-fp8.safetensors",
         "qwen_3_4b_fp4_flux2.safetensors",
         "flux2-vae.safetensors"
-      ]
+      ],
+      "stack_id": "flux2-klein-4b-fast",
+      "capability_id": "image.generate"
     },
     {
       "id": "Image_FLUX2-Klein_06_Poster_768x1024",
@@ -83,7 +93,9 @@
         "flux-2-klein-4b-fp8.safetensors",
         "qwen_3_4b_fp4_flux2.safetensors",
         "flux2-vae.safetensors"
-      ]
+      ],
+      "stack_id": "flux2-klein-4b-fast",
+      "capability_id": "image.generate"
     },
     {
       "id": "Styles_FLUX2-Klein_07_Editorial_768",
@@ -97,7 +109,9 @@
         "flux-2-klein-4b-fp8.safetensors",
         "qwen_3_4b_fp4_flux2.safetensors",
         "flux2-vae.safetensors"
-      ]
+      ],
+      "stack_id": "flux2-klein-4b-fast",
+      "capability_id": "image.generate"
     },
     {
       "id": "Styles_FLUX2-Klein_08_Anime_768",
@@ -111,7 +125,9 @@
         "flux-2-klein-4b-fp8.safetensors",
         "qwen_3_4b_fp4_flux2.safetensors",
         "flux2-vae.safetensors"
-      ]
+      ],
+      "stack_id": "flux2-klein-4b-fast",
+      "capability_id": "image.generate"
     },
     {
       "id": "Styles_FLUX2-Klein_09_Cartoon_768",
@@ -125,7 +141,9 @@
         "flux-2-klein-4b-fp8.safetensors",
         "qwen_3_4b_fp4_flux2.safetensors",
         "flux2-vae.safetensors"
-      ]
+      ],
+      "stack_id": "flux2-klein-4b-fast",
+      "capability_id": "image.generate"
     },
     {
       "id": "Styles_FLUX2-Klein_10_Anthro_768",
@@ -139,7 +157,9 @@
         "flux-2-klein-4b-fp8.safetensors",
         "qwen_3_4b_fp4_flux2.safetensors",
         "flux2-vae.safetensors"
-      ]
+      ],
+      "stack_id": "flux2-klein-4b-fast",
+      "capability_id": "image.generate"
     },
     {
       "id": "Benchmarks_FLUX2-Klein_11_Benchmark_768",
@@ -153,7 +173,9 @@
         "flux-2-klein-4b-fp8.safetensors",
         "qwen_3_4b_fp4_flux2.safetensors",
         "flux2-vae.safetensors"
-      ]
+      ],
+      "stack_id": "flux2-klein-4b-fast",
+      "capability_id": "image.generate"
     },
     {
       "id": "Image_FLUX2-Klein_12_Cinematic_Wide_1152x640",
@@ -167,7 +189,9 @@
         "flux-2-klein-4b-fp8.safetensors",
         "qwen_3_4b_fp4_flux2.safetensors",
         "flux2-vae.safetensors"
-      ]
+      ],
+      "stack_id": "flux2-klein-4b-fast",
+      "capability_id": "image.generate"
     },
     {
       "id": "Image_Qwen-Image-2.1_01_Smoke_512_8step",
@@ -181,7 +205,9 @@
         "qwen_image_2.1_int8_convrot.safetensors",
         "qwen3vl_8b_int8_convrot.safetensors",
         "qwen_image_2.1_vae_bf16.safetensors"
-      ]
+      ],
+      "stack_id": "qwen-image-2.1-convrot",
+      "capability_id": "image.generate"
     },
     {
       "id": "Image_Qwen-Image-2.1_02_Fast_640_12step",
@@ -195,7 +221,9 @@
         "qwen_image_2.1_int8_convrot.safetensors",
         "qwen3vl_8b_int8_convrot.safetensors",
         "qwen_image_2.1_vae_bf16.safetensors"
-      ]
+      ],
+      "stack_id": "qwen-image-2.1-convrot",
+      "capability_id": "image.generate"
     },
     {
       "id": "Image_Qwen-Image-2.1_03_Normal_768_16step",
@@ -209,7 +237,9 @@
         "qwen_image_2.1_int8_convrot.safetensors",
         "qwen3vl_8b_int8_convrot.safetensors",
         "qwen_image_2.1_vae_bf16.safetensors"
-      ]
+      ],
+      "stack_id": "qwen-image-2.1-convrot",
+      "capability_id": "image.generate"
     },
     {
       "id": "Image_Qwen-Image-2.1_04_Quality_1024_25step",
@@ -223,7 +253,9 @@
         "qwen_image_2.1_int8_convrot.safetensors",
         "qwen3vl_8b_int8_convrot.safetensors",
         "qwen_image_2.1_vae_bf16.safetensors"
-      ]
+      ],
+      "stack_id": "qwen-image-2.1-convrot",
+      "capability_id": "image.generate"
     },
     {
       "id": "Mobile_Qwen-Image-2.1_05_Phone_576x1024_16step",
@@ -237,7 +269,9 @@
         "qwen_image_2.1_int8_convrot.safetensors",
         "qwen3vl_8b_int8_convrot.safetensors",
         "qwen_image_2.1_vae_bf16.safetensors"
-      ]
+      ],
+      "stack_id": "qwen-image-2.1-convrot",
+      "capability_id": "image.generate"
     },
     {
       "id": "Image_Qwen-Image-2.1_06_Wide_1024x576_16step",
@@ -251,7 +285,9 @@
         "qwen_image_2.1_int8_convrot.safetensors",
         "qwen3vl_8b_int8_convrot.safetensors",
         "qwen_image_2.1_vae_bf16.safetensors"
-      ]
+      ],
+      "stack_id": "qwen-image-2.1-convrot",
+      "capability_id": "image.generate"
     },
     {
       "id": "Image_Qwen-Image-2.1_07_Typography_768_20step",
@@ -265,7 +301,9 @@
         "qwen_image_2.1_int8_convrot.safetensors",
         "qwen3vl_8b_int8_convrot.safetensors",
         "qwen_image_2.1_vae_bf16.safetensors"
-      ]
+      ],
+      "stack_id": "qwen-image-2.1-convrot",
+      "capability_id": "image.generate"
     },
     {
       "id": "Image_Qwen-Image-2.1_08_Product_768_16step",
@@ -279,7 +317,9 @@
         "qwen_image_2.1_int8_convrot.safetensors",
         "qwen3vl_8b_int8_convrot.safetensors",
         "qwen_image_2.1_vae_bf16.safetensors"
-      ]
+      ],
+      "stack_id": "qwen-image-2.1-convrot",
+      "capability_id": "image.generate"
     },
     {
       "id": "Styles_Qwen-Image-2.1_09_Anime_768_16step",
@@ -293,105 +333,121 @@
         "qwen_image_2.1_int8_convrot.safetensors",
         "qwen3vl_8b_int8_convrot.safetensors",
         "qwen_image_2.1_vae_bf16.safetensors"
-      ]
+      ],
+      "stack_id": "qwen-image-2.1-convrot",
+      "capability_id": "image.generate"
     },
     {
       "id": "Styles_Qwen-Image-2.1_10_Cartoon_768_16step",
       "category": "Style",
       "family": "Qwen Image 2.1",
       "profile": "Cartoon",
-      "title": "Cartoon Character",
+      "title": "Cartoon Illustration",
       "path": "Styles/Qwen-Image-2.1/10_Cartoon_768_16step.json",
       "description": "Cartoon preset for Qwen Image 2.1 using Euler/simple and CFG 1.",
       "required_files": [
         "qwen_image_2.1_int8_convrot.safetensors",
         "qwen3vl_8b_int8_convrot.safetensors",
         "qwen_image_2.1_vae_bf16.safetensors"
-      ]
+      ],
+      "stack_id": "qwen-image-2.1-convrot",
+      "capability_id": "image.generate"
     },
     {
       "id": "Styles_Qwen-Image-2.1_11_Anthro_768_16step",
       "category": "Style",
       "family": "Qwen Image 2.1",
       "profile": "Anthro",
-      "title": "Anthro Character",
+      "title": "Anthro Illustration",
       "path": "Styles/Qwen-Image-2.1/11_Anthro_768_16step.json",
       "description": "Anthro preset for Qwen Image 2.1 using Euler/simple and CFG 1.",
       "required_files": [
         "qwen_image_2.1_int8_convrot.safetensors",
         "qwen3vl_8b_int8_convrot.safetensors",
         "qwen_image_2.1_vae_bf16.safetensors"
-      ]
+      ],
+      "stack_id": "qwen-image-2.1-convrot",
+      "capability_id": "image.generate"
     },
     {
-      "id": "Character_Qwen-Image-2.1_12_Character_Concept_768_18step",
-      "category": "Character",
+      "id": "Image_Qwen-Image-2.1_12_Concept_768_18step",
+      "category": "Image",
       "family": "Qwen Image 2.1",
       "profile": "Concept",
-      "title": "Character Concept",
-      "path": "Character/Qwen-Image-2.1/12_Character_Concept_768_18step.json",
-      "description": "Concept preset for Qwen Image 2.1 using Euler/simple and CFG 1.",
+      "title": "Concept Image",
+      "path": "Image/Qwen-Image-2.1/12_Concept_768_18step.json",
+      "description": "Concept-image preset for Qwen Image 2.1 using Euler/simple and CFG 1.",
       "required_files": [
         "qwen_image_2.1_int8_convrot.safetensors",
         "qwen3vl_8b_int8_convrot.safetensors",
         "qwen_image_2.1_vae_bf16.safetensors"
-      ]
+      ],
+      "capability_id": "image.generate",
+      "stack_id": "qwen-image-2.1-convrot"
     },
     {
-      "id": "Character_Qwen-Image-2.1_20_Single_Reference",
-      "category": "Character",
+      "id": "Reference_Qwen-Image-2.1_20_Single_Reference",
+      "category": "Reference",
       "family": "Qwen Image 2.1",
       "profile": "Single Reference",
-      "title": "Single Identity Reference",
-      "path": "Character/Qwen-Image-2.1/20_Single_Reference.json",
-      "description": "Reference-aware canonical character workflow. Replace each LoadImage placeholder before running.",
+      "title": "Single Reference",
+      "path": "Reference/Qwen-Image-2.1/20_Single_Reference.json",
+      "description": "Reference-guided Qwen Image 2.1 workflow with one image input.",
       "required_files": [
         "qwen_image_2.1_int8_convrot.safetensors",
         "qwen3vl_8b_int8_convrot.safetensors",
         "qwen_image_2.1_vae_bf16.safetensors"
-      ]
+      ],
+      "capability_id": "image.reference",
+      "stack_id": "qwen-image-2.1-convrot"
     },
     {
-      "id": "Character_Qwen-Image-2.1_21_Identity_Plus_Outfit",
-      "category": "Character",
+      "id": "Reference_Qwen-Image-2.1_21_Two_References",
+      "category": "Reference",
       "family": "Qwen Image 2.1",
-      "profile": "Identity + Outfit",
-      "title": "Identity + Outfit",
-      "path": "Character/Qwen-Image-2.1/21_Identity_Plus_Outfit.json",
-      "description": "Reference-aware canonical character workflow. Replace each LoadImage placeholder before running.",
+      "profile": "Two References",
+      "title": "Two References",
+      "path": "Reference/Qwen-Image-2.1/21_Two_References.json",
+      "description": "Reference-guided Qwen Image 2.1 workflow with two image inputs.",
       "required_files": [
         "qwen_image_2.1_int8_convrot.safetensors",
         "qwen3vl_8b_int8_convrot.safetensors",
         "qwen_image_2.1_vae_bf16.safetensors"
-      ]
+      ],
+      "capability_id": "image.reference",
+      "stack_id": "qwen-image-2.1-convrot"
     },
     {
-      "id": "Character_Qwen-Image-2.1_22_Identity_Pose_Style",
-      "category": "Character",
+      "id": "Reference_Qwen-Image-2.1_22_Three_References",
+      "category": "Reference",
       "family": "Qwen Image 2.1",
-      "profile": "Identity + Pose + Style",
-      "title": "Identity + Pose + Style",
-      "path": "Character/Qwen-Image-2.1/22_Identity_Pose_Style.json",
-      "description": "Reference-aware canonical character workflow. Replace each LoadImage placeholder before running.",
+      "profile": "Three References",
+      "title": "Three References",
+      "path": "Reference/Qwen-Image-2.1/22_Three_References.json",
+      "description": "Reference-guided Qwen Image 2.1 workflow with three image inputs.",
       "required_files": [
         "qwen_image_2.1_int8_convrot.safetensors",
         "qwen3vl_8b_int8_convrot.safetensors",
         "qwen_image_2.1_vae_bf16.safetensors"
-      ]
+      ],
+      "capability_id": "image.reference",
+      "stack_id": "qwen-image-2.1-convrot"
     },
     {
-      "id": "Character_Qwen-Image-2.1_23_Four_View_Canonical",
-      "category": "Character",
+      "id": "Reference_Qwen-Image-2.1_23_Four_References",
+      "category": "Reference",
       "family": "Qwen Image 2.1",
-      "profile": "Four View Canon",
-      "title": "Four-View Canonical Character",
-      "path": "Character/Qwen-Image-2.1/23_Four_View_Canonical.json",
-      "description": "Reference-aware canonical character workflow. Replace each LoadImage placeholder before running.",
+      "profile": "Four References",
+      "title": "Four References",
+      "path": "Reference/Qwen-Image-2.1/23_Four_References.json",
+      "description": "Reference-guided Qwen Image 2.1 workflow with four image inputs.",
       "required_files": [
         "qwen_image_2.1_int8_convrot.safetensors",
         "qwen3vl_8b_int8_convrot.safetensors",
         "qwen_image_2.1_vae_bf16.safetensors"
-      ]
+      ],
+      "capability_id": "image.reference",
+      "stack_id": "qwen-image-2.1-convrot"
     },
     {
       "id": "Video_Wan2.2-TI2V-5B_01_Smoke_640x352_33f_10step",
@@ -405,7 +461,9 @@
         "wan2.2_ti2v_5B_fp16.safetensors",
         "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
         "wan2.2_vae.safetensors"
-      ]
+      ],
+      "stack_id": "wan2.2-ti2v-5b",
+      "capability_id": "video.generate"
     },
     {
       "id": "Video_Wan2.2-TI2V-5B_02_Fast_640x352_49f_12step",
@@ -419,7 +477,9 @@
         "wan2.2_ti2v_5B_fp16.safetensors",
         "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
         "wan2.2_vae.safetensors"
-      ]
+      ],
+      "stack_id": "wan2.2-ti2v-5b",
+      "capability_id": "video.generate"
     },
     {
       "id": "Video_Wan2.2-TI2V-5B_03_Normal_832x480_49f_16step",
@@ -433,7 +493,9 @@
         "wan2.2_ti2v_5B_fp16.safetensors",
         "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
         "wan2.2_vae.safetensors"
-      ]
+      ],
+      "stack_id": "wan2.2-ti2v-5b",
+      "capability_id": "video.generate"
     },
     {
       "id": "Video_Wan2.2-TI2V-5B_04_Quality_832x480_81f_20step",
@@ -447,7 +509,9 @@
         "wan2.2_ti2v_5B_fp16.safetensors",
         "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
         "wan2.2_vae.safetensors"
-      ]
+      ],
+      "stack_id": "wan2.2-ti2v-5b",
+      "capability_id": "video.generate"
     },
     {
       "id": "Mobile_Wan2.2-TI2V-5B_05_Phone_Smoke_480x832_33f",
@@ -461,7 +525,9 @@
         "wan2.2_ti2v_5B_fp16.safetensors",
         "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
         "wan2.2_vae.safetensors"
-      ]
+      ],
+      "stack_id": "wan2.2-ti2v-5b",
+      "capability_id": "video.generate"
     },
     {
       "id": "Mobile_Wan2.2-TI2V-5B_06_Phone_Normal_576x1024_49f",
@@ -475,7 +541,9 @@
         "wan2.2_ti2v_5B_fp16.safetensors",
         "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
         "wan2.2_vae.safetensors"
-      ]
+      ],
+      "stack_id": "wan2.2-ti2v-5b",
+      "capability_id": "video.generate"
     },
     {
       "id": "Styles_Wan2.2-TI2V-5B_07_Anime_Motion_640x352",
@@ -489,7 +557,9 @@
         "wan2.2_ti2v_5B_fp16.safetensors",
         "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
         "wan2.2_vae.safetensors"
-      ]
+      ],
+      "stack_id": "wan2.2-ti2v-5b",
+      "capability_id": "video.generate"
     },
     {
       "id": "Styles_Wan2.2-TI2V-5B_08_Cartoon_Motion_640x352",
@@ -503,7 +573,9 @@
         "wan2.2_ti2v_5B_fp16.safetensors",
         "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
         "wan2.2_vae.safetensors"
-      ]
+      ],
+      "stack_id": "wan2.2-ti2v-5b",
+      "capability_id": "video.generate"
     },
     {
       "id": "Styles_Wan2.2-TI2V-5B_09_Anthro_Motion_640x352",
@@ -517,7 +589,9 @@
         "wan2.2_ti2v_5B_fp16.safetensors",
         "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
         "wan2.2_vae.safetensors"
-      ]
+      ],
+      "stack_id": "wan2.2-ti2v-5b",
+      "capability_id": "video.generate"
     },
     {
       "id": "Video_Wan2.2-TI2V-5B_10_Product_Turntable",
@@ -531,7 +605,9 @@
         "wan2.2_ti2v_5B_fp16.safetensors",
         "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
         "wan2.2_vae.safetensors"
-      ]
+      ],
+      "stack_id": "wan2.2-ti2v-5b",
+      "capability_id": "video.generate"
     },
     {
       "id": "Video_Wan2.2-TI2V-5B_11_Slow_Push_In",
@@ -545,35 +621,41 @@
         "wan2.2_ti2v_5B_fp16.safetensors",
         "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
         "wan2.2_vae.safetensors"
-      ]
+      ],
+      "stack_id": "wan2.2-ti2v-5b",
+      "capability_id": "video.generate"
     },
     {
-      "id": "Character_Wan2.2-TI2V-5B_12_I2V_Smoke_480x832",
-      "category": "Character",
+      "id": "Video_Wan2.2-TI2V-5B_12_I2V_Smoke_480x832",
+      "category": "Video",
       "family": "Wan2.2 TI2V 5B",
       "profile": "I2V Smoke",
-      "title": "Reference Image Smoke",
-      "path": "Character/Wan2.2-TI2V-5B/12_I2V_Smoke_480x832.json",
-      "description": "Wan2.2 TI2V 5B I2V Smoke preset at 480×832, 33 frames, 10 steps.",
+      "title": "Image-to-Video Smoke",
+      "path": "Video/Wan2.2-TI2V-5B/12_I2V_Smoke_480x832.json",
+      "description": "Wan2.2 TI2V 5B image-to-video smoke preset at 480×832, 33 frames, 10 steps.",
       "required_files": [
         "wan2.2_ti2v_5B_fp16.safetensors",
         "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
         "wan2.2_vae.safetensors"
-      ]
+      ],
+      "capability_id": "video.image_to_video",
+      "stack_id": "wan2.2-ti2v-5b"
     },
     {
-      "id": "Character_Wan2.2-TI2V-5B_13_I2V_Normal_576x1024",
-      "category": "Character",
+      "id": "Video_Wan2.2-TI2V-5B_13_I2V_Normal_576x1024",
+      "category": "Video",
       "family": "Wan2.2 TI2V 5B",
       "profile": "I2V Normal",
-      "title": "Reference Image Normal",
-      "path": "Character/Wan2.2-TI2V-5B/13_I2V_Normal_576x1024.json",
-      "description": "Wan2.2 TI2V 5B I2V Normal preset at 576×1024, 49 frames, 16 steps.",
+      "title": "Image-to-Video Normal",
+      "path": "Video/Wan2.2-TI2V-5B/13_I2V_Normal_576x1024.json",
+      "description": "Wan2.2 TI2V 5B image-to-video normal preset at 576×1024, 49 frames, 16 steps.",
       "required_files": [
         "wan2.2_ti2v_5B_fp16.safetensors",
         "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
         "wan2.2_vae.safetensors"
-      ]
+      ],
+      "capability_id": "video.image_to_video",
+      "stack_id": "wan2.2-ti2v-5b"
     },
     {
       "id": "Benchmarks_Wan2.2-TI2V-5B_14_Benchmark_640x352",
@@ -587,7 +669,9 @@
         "wan2.2_ti2v_5B_fp16.safetensors",
         "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
         "wan2.2_vae.safetensors"
-      ]
+      ],
+      "stack_id": "wan2.2-ti2v-5b",
+      "capability_id": "video.generate"
     }
   ]
 }

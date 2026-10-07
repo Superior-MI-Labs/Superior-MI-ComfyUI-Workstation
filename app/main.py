@@ -14,6 +14,7 @@ import time
 import urllib.request
 import sys
 import traceback
+from dataclasses import asdict
 from datetime import datetime
 from pathlib import Path
 
@@ -28,7 +29,6 @@ import model_library
 import benchmark_store
 import gallery_helper
 import setup_helper
-import character_library
 import creation_helper
 import platform_support
 import blueprint_manager
@@ -37,6 +37,7 @@ import comfy_integration
 import execution_client
 import update_manager
 import startup_guard
+from core.hardware import observe_hardware, observe_primary_gpu_telemetry
 
 APP_NAME = "Superior MI Labs - ComfyUI Workstation"
 APP_ID = "com.superiormi.labs.comfyui"
@@ -413,21 +414,13 @@ def collect_status(cfg, include_inventory=False):
         s.state = "STOPPED"
         s.detail = "No ComfyUI runtime process detected."
 
-    rc, out = run_text([
-        "nvidia-smi",
-        "--query-gpu=name,memory.used,memory.total,utilization.gpu,temperature.gpu",
-        "--format=csv,noheader,nounits",
-    ], timeout=3)
-    if rc == 0 and out:
-        try:
-            p = [x.strip() for x in out.splitlines()[0].split(",")]
-            s.gpu_name = p[0]
-            s.gpu_used = int(float(p[1])) * 1024**2
-            s.gpu_total = int(float(p[2])) * 1024**2
-            s.gpu_util = int(float(p[3]))
-            s.gpu_temp = int(float(p[4]))
-        except Exception:
-            pass
+    gpu = observe_primary_gpu_telemetry()
+    if gpu.model:
+        s.gpu_name = gpu.model
+        s.gpu_used = gpu.used_bytes
+        s.gpu_total = gpu.total_bytes
+        s.gpu_util = gpu.utilization_percent
+        s.gpu_temp = gpu.temperature_c
 
     try:
         mem = {}
@@ -603,7 +596,7 @@ class RecoveryWindow(Gtk.ApplicationWindow):
         note = Gtk.Label(
             label=(
                 "The main interface hit a startup error. Your ComfyUI installation, models, "
-                "characters, presets, and outputs were not modified by this recovery screen."
+                "models, presets, and outputs were not modified by this recovery screen."
             ),
             xalign=0,
         )
@@ -663,7 +656,6 @@ class AppWindow(Gtk.ApplicationWindow):
         self.log_errors_only = False
         self.active_runs = {}
         self.last_queue = []
-        self.characters_cache = []
         self.last_generated_workflow = None
         self.last_generated_workflow_path = None
         startup_guard.stage("window-init", "constructing lightweight shell")
@@ -685,11 +677,7 @@ class AppWindow(Gtk.ApplicationWindow):
             GLib.idle_add(self._safe_idle, self._post_window_init, "post-window initialization")
 
     def _post_window_init(self):
-        startup_guard.stage("post-init", "seeding characters and starting background monitors")
-        try:
-            character_library.seed_bundled_characters(overwrite=False)
-        except Exception:
-            write_crash(traceback.format_exc(), "character seed")
+        startup_guard.stage("post-init", "starting background monitors")
         try:
             self.refresh(full=True)
         except Exception:
@@ -995,12 +983,11 @@ class AppWindow(Gtk.ApplicationWindow):
     def _library(self):
         outer = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
         outer.set_border_width(10)
-        outer.pack_start(RoleHeader("explorer", "Library", "Blueprints describe how to create. Packs provide the models they need. Characters provide reusable identity inputs. They are one system."), False, False, 0)
+        outer.pack_start(RoleHeader("explorer", "Library", "Blueprints describe how to create. Packs provide the models and components they need. Reference workflows remain ordinary ComfyUI graphs."), False, False, 0)
         notebook = self._lazy_notebook(
             (
                 ("Blueprints", self._presets),
                 ("Starter Packs", self._starter_packs),
-                ("Characters", self._characters),
                 ("Components", self._picks),
             ),
             attr_name="library_tabs",
@@ -1057,9 +1044,9 @@ class AppWindow(Gtk.ApplicationWindow):
         updates.pack_start(repo, False, False, 0)
         page.pack_start(updates, False, False, 0)
         topics = [
-            ("First 10 minutes", "1. Install a Starter Pack in Library.  2. Start ComfyUI.  3. Go to Create.  4. Pick Image, Character Image, or Video from Image.  5. Press Generate. The output and progress stay visible in Create."),
+            ("First 10 minutes", "1. Install a Starter Pack in Library.  2. Start ComfyUI.  3. Go to Create.  4. Pick Image, Reference Image, or Video from Image.  5. Press Generate. The output and progress stay visible in Create."),
             ("Blueprints vs Packs", "A Blueprint is a creation recipe. A Pack is the set of models/components required to run it. Installing a Pack makes several Blueprints ready at once."),
-            ("Characters", "Characters are image references stored under ~/Models/Media/Characters. Superior MI examples live under the Superior-MI-Labs folder. Create your own folders and drop images inside; the Workstation discovers them recursively."),
+            ("Reference images", "Qwen reference workflows and image-to-video workflows use ordinary image inputs. Persistent Character management is not part of Workstation Core R1."),
             ("Open in ComfyUI", "Blueprints and generated creations are imported into ComfyUI's workflow library automatically. With the bundled bridge active, the selected workflow also opens directly in the graph."),
             ("Video", "Wan2.2 5B is exposed as Image → Video in the beginner UI because a real source image makes the input contract explicit. Generate or choose a still first, then animate it."),
         ]
@@ -1145,7 +1132,7 @@ class AppWindow(Gtk.ApplicationWindow):
         ct = Gtk.Label(label="WHAT DO YOU WANT TO MAKE?", xalign=0); ct.get_style_context().add_class("section-title")
         create.pack_start(ct, False, False, 0)
         crow = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
-        for label, cat in (("Make an Image", "Image"), ("Make a Video", "Video"), ("Phone / Vertical", "Mobile"), ("Use Reference Images", "Character"), ("Anime / Cartoon / Anthro", "Style")):
+        for label, cat in (("Make an Image", "Image"), ("Make a Video", "Video"), ("Phone / Vertical", "Mobile"), ("Use Reference Images", "Reference"), ("Anime / Cartoon / Anthro", "Style")):
             b = Gtk.Button(label=label)
             b.connect("clicked", lambda _b, c=cat: self._home_create_action(c))
             crow.pack_start(b, True, True, 0)
@@ -1181,12 +1168,12 @@ class AppWindow(Gtk.ApplicationWindow):
         return sc
 
     def _home_create_action(self, category):
-        if category in ("Image","Mobile","Character","Video"):
+        if category in ("Image","Mobile","Reference","Video"):
             self.tabs.set_current_page(0)
             # Match the nearest beginner creation method.
             preferred = {
                 "Image":"Text Image (FLUX.2 Klein 4B)",
-                "Character":"Character Image (Qwen Image 2.1)",
+                "Reference":"Reference Image (Qwen Image 2.1)",
                 "Video":"Video from Image (Wan2.2 TI2V 5B)",
                 "Mobile":"Text Image (Qwen Image 2.1)",
             }.get(category)
@@ -1281,7 +1268,7 @@ class AppWindow(Gtk.ApplicationWindow):
         progress_buf = progress_view.get_buffer()
         progress_buf.set_text("Kisha is ready. No changes have been made yet.\n")
 
-        finish = Gtk.CheckButton(label="I understand where ComfyUI, models, Blueprints, characters, and outputs live. Do not show this automatically next time.")
+        finish = Gtk.CheckButton(label="I understand where ComfyUI, models, Blueprints, inputs, and outputs live. Do not show this automatically next time.")
         finish.set_active(bool(self.cfg.get("onboarding_complete", False)))
         outer.pack_start(finish, False, False, 0)
 
@@ -1397,10 +1384,9 @@ class AppWindow(Gtk.ApplicationWindow):
         self.create_mode = Gtk.ComboBoxText()
         self.create_mode.connect("changed", lambda *_: self.create_mode_changed())
 
-        self.create_character = Gtk.ComboBoxText()
         self.create_source_entry = Gtk.Entry()
         self.create_source_entry.set_editable(False)
-        self.create_source_entry.set_placeholder_text("Choose an image to animate")
+        self.create_source_entry.set_placeholder_text("Choose a reference or source image")
         choose_source = Gtk.Button(label="Choose Image…")
         choose_source.connect("clicked", lambda *_: self.choose_create_source())
         latest_source = Gtk.Button(label="Use Latest Output")
@@ -1422,7 +1408,6 @@ class AppWindow(Gtk.ApplicationWindow):
 
         rows = [
             ("mode", "Create", self.create_mode),
-            ("character", "Character", self.create_character),
             ("source_image", "Source image", source_row),
             ("format", "Format", self.create_orientation),
             ("quality", "Quality", self.create_quality),
@@ -1509,7 +1494,6 @@ class AppWindow(Gtk.ApplicationWindow):
 
     def refresh_create_panel(self):
         modes = creation_helper.installed_modes()
-        self.characters_cache = character_library.scan_characters()
         current_mode = self._normalized_create_mode() if hasattr(self, "create_mode") else None
         self.create_mode.remove_all()
         keys = list(modes)
@@ -1520,17 +1504,10 @@ class AppWindow(Gtk.ApplicationWindow):
         if keys:
             self.create_mode.set_active(idx)
 
-        self.create_character.remove_all()
-        for c in self.characters_cache:
-            collection = c.collection or "Custom"
-            self.create_character.append(c.uid, f"{c.name}  •  {collection}")
-        if self.characters_cache:
-            self.create_character.set_active(0)
-
-        ready_count = sum(1 for v in modes.values() if v)
+        ready_count = sum(1 for value in modes.values() if value)
         runtime = "running" if self.last_status and self.last_status.http else "stopped"
         self.create_status.set_text(
-            f"{ready_count}/{len(modes)} creation methods ready • {len(self.characters_cache)} characters • ComfyUI {runtime}"
+            f"{ready_count}/{len(modes)} creation methods ready • ComfyUI {runtime}"
         )
         self.create_mode_changed()
         return False
@@ -1547,26 +1524,35 @@ class AppWindow(Gtk.ApplicationWindow):
             widget.set_visible(bool(visible))
 
     def create_mode_changed(self):
-        if not hasattr(self, "create_character"):
+        if not hasattr(self, "create_mode"):
             return
         mode = self._normalized_create_mode()
         if mode not in creation_helper.MODES:
             return
 
         caps = creation_helper.mode_capabilities(mode)
-        needs_character = bool(caps["character"])
+        needs_reference = bool(caps["reference_image"])
         needs_source = bool(caps["source_image"])
+        needs_media = needs_reference or needs_source
 
-        # The simple Create surface mirrors the selected Blueprint. Controls
-        # that the graph cannot consume are not shown at all.
-        self._set_create_row_visible("character", needs_character)
-        self._set_create_row_visible("source_image", needs_source)
+        # Legacy GTK compatibility projection. Native R1 Create derives controls
+        # directly from the live ComfyUI graph.
+        self._set_create_row_visible("source_image", needs_media)
         self._set_create_row_visible("format", bool(caps["format"]))
         self._set_create_row_visible("quality", bool(caps["quality"]))
 
+        source_row = getattr(self, "create_rows", {}).get("source_image")
+        if source_row:
+            source_row[0].set_text("Reference image" if needs_reference else "Source image")
+        self.create_source_entry.set_placeholder_text(
+            "Choose a reference image" if needs_reference else "Choose an image to animate"
+        )
+
         semantic = ["Prompt"]
-        if needs_character:
-            semantic.append(f"Character reference ({caps['reference_slots']} slot{'s' if caps['reference_slots'] != 1 else ''})")
+        if needs_reference:
+            semantic.append(
+                f"Reference image ({caps['reference_slots']} slot{'s' if caps['reference_slots'] != 1 else ''})"
+            )
         if needs_source:
             semantic.append("Source image")
         if caps["format"]:
@@ -1576,10 +1562,7 @@ class AppWindow(Gtk.ApplicationWindow):
         self.create_contract.set_text("This setup uses: " + " • ".join(semantic))
 
         ready = creation_helper.installed_modes().get(mode, False)
-        has_inputs = (
-            (not needs_character or bool(self.characters_cache))
-            and (not needs_source or bool(self.create_source_path))
-        )
+        has_inputs = not needs_media or bool(self.create_source_path)
         self.create_workflow_btn.set_sensitive(ready and has_inputs and not self.create_running)
         running = bool(self.last_status and self.last_status.http)
         self.create_queue_btn.set_sensitive(ready and running and has_inputs and not self.create_running)
@@ -1588,11 +1571,6 @@ class AppWindow(Gtk.ApplicationWindow):
         buf = self.create_prompt.get_buffer()
         return buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True).strip()
 
-    def _active_character(self):
-        uid = self.create_character.get_active_id()
-        if not uid:
-            return None
-        return character_library.find_character(uid, self.characters_cache)
 
     def choose_create_source(self):
         d = Gtk.FileChooserDialog(
@@ -1632,19 +1610,27 @@ class AppWindow(Gtk.ApplicationWindow):
         orientation = self.create_orientation.get_active_text() or "Square"
         quality = self.create_quality.get_active_text() or "Normal"
         caps = creation_helper.mode_capabilities(mode)
-        character = self._active_character() if caps.get("character") else None
+        reference = self.create_source_path if caps.get("reference_image") else None
         source = self.create_source_path if caps.get("source_image") else None
-        return mode, creation_helper.build_workflow(mode, prompt, orientation, quality, character, source_image=source), character
+        workflow = creation_helper.build_workflow(
+            mode,
+            prompt,
+            orientation,
+            quality,
+            reference_image=reference,
+            source_image=source,
+        )
+        return mode, workflow
 
-    def _workflow_label(self, mode, character=None):
+    def _workflow_label(self, mode):
         quality = self.create_quality.get_active_text() or "Normal"
         orientation = self.create_orientation.get_active_text() or "Square"
-        return f"{character.name if character else mode}_{quality}_{orientation}_{datetime.now():%H%M%S}"
+        return f"{mode}_{quality}_{orientation}_{datetime.now():%H%M%S}"
 
     def create_quick_workflow(self, queue_now=False):
         try:
-            mode, workflow, character = self._build_current_create_workflow()
-            label = self._workflow_label(mode, character)
+            mode, workflow = self._build_current_create_workflow()
+            label = self._workflow_label(mode)
 
             if not (self.last_status and self.last_status.http):
                 raise RuntimeError("Start ComfyUI first so the Workstation can validate this setup against your local node contracts.")
@@ -1782,194 +1768,6 @@ class AppWindow(Gtk.ApplicationWindow):
             return attempts["n"] < 50
         GLib.timeout_add(80, later)
 
-    def _characters(self):
-        page = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
-        page.set_border_width(14)
-        page.pack_start(RoleHeader("everyday", "Character Library", "Drop an image into the character folder and it becomes a selectable character. Subfolders become categories; optional same-name JSON sidecars add metadata."), False, False, 0)
-
-        bar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
-        self.character_search = Gtk.SearchEntry(); self.character_search.set_placeholder_text("Search name, role, tag…")
-        self.character_search.connect("search-changed", lambda *_: self.refresh_characters())
-        self.character_kind = Gtk.ComboBoxText(); self.character_kind.append_text("All")
-        self.character_kind.set_active(0); self.character_kind.connect("changed", lambda *_: self.refresh_characters())
-        self.character_collection = Gtk.ComboBoxText(); self.character_collection.append_text("All collections")
-        self.character_collection.set_active(0); self.character_collection.connect("changed", lambda *_: self.refresh_characters())
-        refresh = Gtk.Button(label="Refresh"); refresh.connect("clicked", lambda *_: self.refresh_characters(reset_kinds=True))
-        imp = Gtk.Button(label="Import Image…"); imp.connect("clicked", lambda *_: self.import_character_image())
-        newfolder = Gtk.Button(label="New Folder…"); newfolder.connect("clicked", lambda *_: self.create_character_folder())
-        folder = Gtk.Button(label="Open Character Folder"); folder.connect("clicked", lambda *_: open_path(character_library.USER_ROOT))
-        bar.pack_start(self.character_search, True, True, 0)
-        bar.pack_start(self.character_collection, False, False, 0)
-        bar.pack_start(self.character_kind, False, False, 0)
-        bar.pack_start(refresh, False, False, 0)
-        bar.pack_start(imp, False, False, 0)
-        bar.pack_start(newfolder, False, False, 0)
-        bar.pack_start(folder, False, False, 0)
-        page.pack_start(bar, False, False, 0)
-
-        self.character_summary = Gtk.Label(label="", xalign=0); self.character_summary.get_style_context().add_class("kisha-label")
-        page.pack_start(self.character_summary, False, False, 0)
-
-        paned = Gtk.Paned.new(Gtk.Orientation.HORIZONTAL)
-        page.pack_start(paned, True, True, 0)
-        self.character_store = Gtk.ListStore(GdkPixbuf.Pixbuf, str, str)
-        self.character_icons = Gtk.IconView.new()
-        self.character_icons.set_model(self.character_store)
-        self.character_icons.set_pixbuf_column(0); self.character_icons.set_text_column(1)
-        self.character_icons.set_item_width(190); self.character_icons.set_margin(8); self.character_icons.set_spacing(8); self.character_icons.set_row_spacing(12); self.character_icons.set_column_spacing(10)
-        self.character_icons.connect("selection-changed", lambda *_: self.on_character_selected())
-        self.character_icons.connect("item-activated", lambda *_: self.character_make_image())
-        left = Gtk.ScrolledWindow(); left.set_min_content_width(610); left.add(self.character_icons)
-        paned.pack1(left, True, False)
-
-        right_sc = Gtk.ScrolledWindow(); right_sc.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
-        right = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8); right.set_border_width(12); right.get_style_context().add_class("card")
-        right_sc.add(right)
-        self.character_preview = Gtk.Image(); right.pack_start(self.character_preview, False, False, 0)
-        self.character_title = Gtk.Label(label="Select a character", xalign=0); self.character_title.get_style_context().add_class("section-title"); right.pack_start(self.character_title, False, False, 0)
-        self.character_detail = Gtk.Label(label="", xalign=0); self.character_detail.set_line_wrap(True); self.character_detail.set_selectable(True); right.pack_start(self.character_detail, False, False, 0)
-        self.character_use_btn = Gtk.Button(label="Use in Create"); self.character_use_btn.set_sensitive(False); self.character_use_btn.get_style_context().add_class("suggested-action"); self.character_use_btn.connect("clicked", lambda *_: self.character_use_in_create())
-        self.character_workflow_btn = Gtk.Button(label="Create Qwen Character Workflow"); self.character_workflow_btn.set_sensitive(False); self.character_workflow_btn.connect("clicked", lambda *_: self.character_make_image())
-        open_img = Gtk.Button(label="Open Reference Image"); open_img.connect("clicked", lambda *_: self.open_selected_character())
-        for b in (self.character_use_btn, self.character_workflow_btn, open_img): right.pack_start(b, False, False, 0)
-        paned.pack2(right_sc, False, False)
-        GLib.idle_add(self.refresh_characters, True)
-        return page
-
-    def refresh_characters(self, reset_kinds=False):
-        self.characters_cache = character_library.scan_characters()
-        if reset_kinds and hasattr(self, "character_kind"):
-            active = self.character_kind.get_active_text() or "All"
-            self.character_kind.remove_all(); self.character_kind.append_text("All")
-            kinds = character_library.categories(self.characters_cache)
-            for k in kinds: self.character_kind.append_text(k)
-            choices = ["All"] + kinds
-            self.character_kind.set_active(choices.index(active) if active in choices else 0)
-            if hasattr(self, "character_collection"):
-                active_collection = self.character_collection.get_active_text() or "All collections"
-                self.character_collection.remove_all(); self.character_collection.append_text("All collections")
-                collections = character_library.collections(self.characters_cache)
-                for c in collections: self.character_collection.append_text(c)
-                cchoices = ["All collections"] + collections
-                self.character_collection.set_active(cchoices.index(active_collection) if active_collection in cchoices else 0)
-        search = (self.character_search.get_text() if hasattr(self, "character_search") else "").strip().lower()
-        kind = (self.character_kind.get_active_text() if hasattr(self, "character_kind") else "All") or "All"
-        collection = (self.character_collection.get_active_text() if hasattr(self, "character_collection") else "All collections") or "All collections"
-        self.character_store.clear()
-        visible = []
-        for c in self.characters_cache:
-            hay = " ".join([c.name,c.role,c.kind,c.identity,c.pronouns,c.body_type,c.species," ".join(c.tags)]).lower()
-            if search and search not in hay: continue
-            if kind != "All" and c.kind != kind: continue
-            if collection != "All collections" and c.collection != collection: continue
-            visible.append(c)
-            try:
-                pix = GdkPixbuf.Pixbuf.new_from_file_at_scale(str(character_library.thumbnail_path(c)), 180, 235, True)
-            except Exception:
-                pix = None
-            label = c.name + (f"\n{c.role}" if c.role else "")
-            self.character_store.append([pix, label, c.uid])
-        groups = {}
-        for c in self.characters_cache: groups[c.kind] = groups.get(c.kind,0)+1
-        group_text = " • ".join(f"{k}: {v}" for k,v in sorted(groups.items()))
-        self.character_summary.set_text(f"{len(self.characters_cache)} characters discovered • {len(visible)} shown" + (f" • {group_text}" if group_text else ""))
-        if hasattr(self, "create_character"):
-            self.refresh_create_panel()
-        return False
-
-    def _selected_character(self):
-        paths = self.character_icons.get_selected_items()
-        if not paths: return None
-        itr = self.character_store.get_iter(paths[0])
-        uid = self.character_store.get_value(itr, 2)
-        return character_library.find_character(uid, self.characters_cache)
-
-    def on_character_selected(self):
-        c = self._selected_character()
-        self.character_use_btn.set_sensitive(bool(c)); self.character_workflow_btn.set_sensitive(bool(c))
-        if not c:
-            self.character_title.set_text("Select a character"); self.character_detail.set_text(""); self.character_preview.clear(); return
-        self.character_title.set_text(c.name)
-        parts = [
-            f"Role: {c.role}" if c.role else "",
-            f"Type: {c.kind}" if c.kind else "",
-            f"Identity: {c.identity} ({c.pronouns})" if c.identity or c.pronouns else "",
-            f"Body: {c.body_type}" if c.body_type else "",
-            f"Species: {c.species}" if c.species else "",
-            f"Tags: {', '.join(c.tags)}" if c.tags else "",
-            f"Collection: {c.collection}" if c.collection else "",
-            f"File: {c.image_path}",
-        ]
-        if c.warnings: parts.append("Warnings: " + "; ".join(c.warnings))
-        self.character_detail.set_text("\n".join(x for x in parts if x))
-        try:
-            pix = GdkPixbuf.Pixbuf.new_from_file_at_scale(str(c.image_path), 330, 440, True)
-            self.character_preview.set_from_pixbuf(pix)
-        except Exception:
-            self.character_preview.set_from_icon_name("image-missing", Gtk.IconSize.DIALOG)
-
-    def character_use_in_create(self):
-        c = self._selected_character()
-        if not c: return
-        self.tabs.set_current_page(0)
-        # Character Image is the first mode in the current catalog.
-        self.create_mode.set_active(0)
-        for i in range(len(self.characters_cache)):
-            if self.create_character.get_active_id() == c.uid: break
-            self.create_character.set_active(i)
-            if self.create_character.get_active_id() == c.uid: break
-        self.create_prompt.grab_focus()
-
-    def character_make_image(self):
-        c = self._selected_character()
-        if not c: return
-        self.character_use_in_create()
-        self.create_quick_workflow(queue_now=False)
-
-    def open_selected_character(self):
-        c = self._selected_character()
-        if c: platform_support.open_target(c.image_path)
-
-    def create_character_folder(self):
-        d=Gtk.Dialog(title="New Character Folder",transient_for=self,flags=0)
-        d.add_button("Cancel",Gtk.ResponseType.CANCEL); d.add_button("Create",Gtk.ResponseType.OK)
-        entry=Gtk.Entry(); entry.set_placeholder_text("Example: My Story / Heroes")
-        box=d.get_content_area(); box.set_border_width(14); box.pack_start(Gtk.Label(label="Folder name or nested path",xalign=0),False,False,4); box.pack_start(entry,False,False,4)
-        d.show_all()
-        if d.run()==Gtk.ResponseType.OK:
-            raw=entry.get_text().strip().replace("\\\\","/")
-            parts=[p.strip() for p in raw.split("/") if p.strip() and p.strip() not in (".","..")]
-            if parts:
-                target=character_library.USER_ROOT
-                for p in parts:
-                    safe="".join(c if c.isalnum() or c in " _-" else "_" for c in p).strip()
-                    if safe: target=target/safe
-                target.mkdir(parents=True,exist_ok=True)
-                open_path(target)
-                self.refresh_characters()
-        d.destroy()
-
-    def import_character_image(self):
-        d = Gtk.FileChooserDialog(title="Import Character Reference", transient_for=self, action=Gtk.FileChooserAction.OPEN)
-        d.add_buttons(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, "Import", Gtk.ResponseType.OK)
-        filt = Gtk.FileFilter(); filt.set_name("Images");
-        for pat in ("*.png","*.jpg","*.jpeg","*.webp","*.PNG","*.JPG","*.JPEG","*.WEBP"): filt.add_pattern(pat)
-        d.add_filter(filt)
-        if d.run() == Gtk.ResponseType.OK:
-            src = Path(d.get_filename())
-            dest_dir = character_library.USER_ROOT / "Custom"
-            dest_dir.mkdir(parents=True, exist_ok=True)
-            dst = dest_dir / src.name
-            n = 2
-            while dst.exists():
-                dst = dest_dir / f"{src.stem} {n}{src.suffix}"
-                n += 1
-            shutil.copy2(src, dst)
-            d.destroy()
-            self.refresh_characters(reset_kinds=True)
-            self.dialog("Character imported", f"{dst.name}\n\nThe filename becomes the default character name. Add a same-name .json sidecar later if you want roles, tags, pronouns, species, or other metadata.")
-            return
-        d.destroy()
 
     def _models(self):
         page=Gtk.Box(orientation=Gtk.Orientation.VERTICAL,spacing=10); page.set_border_width(14)
@@ -2280,7 +2078,7 @@ class AppWindow(Gtk.ApplicationWindow):
         page.pack_start(RoleHeader("everyday","Blueprints","Reusable creation recipes. Each Blueprint declares the Pack/models it needs and can open directly in ComfyUI."),False,False,0)
 
         intro = Gtk.Label(
-            label="Blueprints are the single recipe system used by Create, Starter Packs, Characters, and ComfyUI. READY means its required model Pack is already available.",
+            label="Blueprints are the single recipe system used by Create, Starter Packs, Reference workflows, and ComfyUI. READY means its required model Pack is already available.",
             xalign=0,
         )
         intro.set_line_wrap(True)
@@ -2300,7 +2098,7 @@ class AppWindow(Gtk.ApplicationWindow):
         tools.pack_start(bopen, False, False, 0)
         tools.pack_end(Gtk.Label(label="Category"), False, False, 0)
         self.preset_category_filter = Gtk.ComboBoxText()
-        for cat in ("All", "Image", "Video", "Mobile", "Character", "Style", "Benchmark"):
+        for cat in ("All", "Image", "Reference", "Video", "Mobile", "Style", "Benchmark"):
             self.preset_category_filter.append_text(cat)
         self.preset_category_filter.set_active(0)
         self.preset_category_filter.connect("changed", lambda *_: self.refresh_presets())
@@ -2399,7 +2197,7 @@ class AppWindow(Gtk.ApplicationWindow):
         if hasattr(self, "library_tabs"):
             self.library_tabs.set_current_page(0)
         if hasattr(self, "preset_category_filter"):
-            options = ["All", "Image", "Video", "Mobile", "Character", "Style", "Benchmark"]
+            options = ["All", "Image", "Reference", "Video", "Mobile", "Style", "Benchmark"]
             try:
                 self.preset_category_filter.set_active(options.index(category))
             except ValueError:
@@ -2433,7 +2231,7 @@ class AppWindow(Gtk.ApplicationWindow):
         if not e:
             return
         if not preset_manager.compatible(e):
-            stack_id = blueprint_manager.FAMILY_STACK.get(e.get("family",""), "")
+            stack_id = str(e.get("stack_id", ""))
             msg = "This Blueprint needs a model Pack first."
             if stack_id:
                 msg += "\n\nOpen Starter Packs or Components to install its requirements."
@@ -2880,8 +2678,7 @@ class AppWindow(Gtk.ApplicationWindow):
           "Choosing a Pack":"Library → Starter Packs is the easiest path. A Pack supplies the models/components needed by one or more Blueprints. Library → Components is the advanced view when you want individual quantizations, accelerators, or add-ons.",
           "Model library":"The app keeps canonical downloads under ~/Models/Media and symlinks them into ComfyUI/models. That avoids duplicate giant model files while keeping ComfyUI's normal loaders and directories.",
           "Runtime states":"RUNNING means the expected ComfyUI process exists and HTTP responds. STARTING means the process exists but the port is not ready. DEGRADED means the listener exists but health is not responding. PORT CONFLICT means another process owns the configured port.",
-          "Character Library":"Characters are discovered recursively under ~/Models/Media/Characters. Any PNG/JPG/WEBP becomes a character automatically; its filename is the default name. Put characters in subfolders for categories. A same-name JSON file is optional metadata for role, tags, pronouns, species, body type, and stable IDs. The 21 Superior MI starter characters are seeded without overwriting user files.",
-          "Reference characters":"For identity consistency, use the Character Library or Qwen Image 2.1 reference presets to create/approve canonical stills, then feed an approved still into Wan or another I2V model. Multi-reference identity is more reliable than seed-only character recreation.",
+          "Reference images":"Qwen Image 2.1 reference Blueprints accept ordinary source images. Use Studio for multi-reference graph editing and Wan image-to-video workflows for animation.",
           "Performance":"Lower resolution, frame count and sampling steps first. Keep batch size at 1 on tighter GPUs. Do not randomly swap text encoders, VAEs, or model types across architectures: those are compatibility contracts, not style controls.",
           "Output gallery":"The Gallery tab shows recent images/videos from ComfyUI/output. Images preview inside the app; videos open in your desktop media player.",
           "Benchmarks":"Leave the control center open while generating. It watches the live ComfyUI queue and records elapsed time plus sampled peak VRAM, model filenames, resolution, steps and frame length when it can infer them from the prompt graph.",
@@ -2917,7 +2714,7 @@ class AppWindow(Gtk.ApplicationWindow):
                 "A local-first runtime utility for WolfCat-Studio. "
                 "Designed around a single ComfyUI authority, observable state, safe maintenance, "
                 "and Superior MI's northern technical visual language.\n\n"
-                "Kisha serves here as the runtime sentinel and contextual help presence, not a second runtime or agent.\n\nVersion 2.2 adds a filesystem-driven expandable Character Library with 21 bundled Superior MI reference characters, a beginner Create surface that compiles simple choices into the existing ComfyUI pipeline, direct queue submission with node validation, and portability groundwork for future Windows/macOS builds."
+                "Kisha serves here as the runtime sentinel and contextual help presence, not a second runtime or agent.\n\nCore R1 is moving creation onto the native ComfyUI Studio canvas with graph-derived simple controls, hardware-aware planning, and approval-gated setup actions."
             ),
             justify=Gtk.Justification.CENTER,
         )
@@ -3243,7 +3040,11 @@ class AppWindow(Gtk.ApplicationWindow):
                 rc, txt = run_text(cmd, timeout=20, cwd=cwd)
                 sections.append(f"\n=== {title} (rc={rc}) ===\n{txt}\n")
             sections.append(f"{APP_NAME} diagnostics\nGenerated: {datetime.now().isoformat()}\n")
-            add("NVIDIA", ["nvidia-smi"])
+            try:
+                profile = observe_hardware(storage_paths=(COMFY, MODEL_ROOT))
+                sections.append("\n=== HARDWARE PROFILE ===\n" + json.dumps(asdict(profile), indent=2) + "\n")
+            except Exception as exc:
+                sections.append(f"\n=== HARDWARE PROFILE ===\nUnavailable: {exc}\n")
             if COMFY.exists():
                 add("GIT STATUS", ["git", "status", "--short", "--branch"], COMFY)
                 add("GIT HEAD", ["git", "rev-parse", "HEAD"], COMFY)

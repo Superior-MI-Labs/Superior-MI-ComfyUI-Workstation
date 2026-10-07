@@ -1,5 +1,5 @@
 {
-  "version": "3.0.0",
+  "version": "3.1.0",
   "packs": [
     {
       "id": "starter-image",
@@ -12,7 +12,7 @@
       ],
       "default_blueprint_family": "FLUX.2 Klein 4B",
       "capabilities": [
-        "Text \u2192 Image",
+        "Text → Image",
         "Mobile",
         "Illustration",
         "Anime / Cartoon / Anthro"
@@ -20,19 +20,19 @@
       "recommended_vram_gb": 8
     },
     {
-      "id": "starter-character",
-      "title": "Character Creator Pack",
+      "id": "starter-reference",
+      "title": "Reference Image Pack",
       "badge": "STAFF PICK",
-      "audience": "Characters & references",
-      "description": "Qwen Image 2.1 ConvRot with reference-aware character creation and editing.",
+      "audience": "References & image editing",
+      "description": "Qwen Image 2.1 ConvRot for local image generation, reference-guided creation, and editing.",
       "stack_ids": [
         "qwen-image-2.1-convrot"
       ],
       "default_blueprint_family": "Qwen Image 2.1",
       "capabilities": [
-        "Text \u2192 Image",
-        "Reference \u2192 Image",
-        "Canonical Characters",
+        "Text → Image",
+        "Reference → Image",
+        "Image Editing",
         "Typography"
       ],
       "recommended_vram_gb": 12
@@ -48,7 +48,7 @@
       ],
       "default_blueprint_family": "Wan2.2 TI2V 5B",
       "capabilities": [
-        "Image \u2192 Video",
+        "Image → Video",
         "Phone Portrait",
         "Anime Motion",
         "Product Motion"
@@ -59,8 +59,8 @@
       "id": "creator-suite",
       "title": "Superior MI Creator Suite",
       "badge": "RECOMMENDED",
-      "audience": "Images + characters + video",
-      "description": "The complete beginner-friendly set: FLUX.2 Klein, Qwen Image 2.1, and Wan2.2 5B. Installs the model families used by the main Create page.",
+      "audience": "Images + references + video",
+      "description": "The complete beginner-friendly set: FLUX.2 Klein, Qwen Image 2.1, and Wan2.2 5B. Covers general images, reference-guided images, and image/video workflows.",
       "stack_ids": [
         "flux2-klein-4b-fast",
         "qwen-image-2.1-convrot",
@@ -68,10 +68,10 @@
       ],
       "default_blueprint_family": "Qwen Image 2.1",
       "capabilities": [
-        "Text \u2192 Image",
-        "Character Images",
-        "Reference Editing",
-        "Image \u2192 Video"
+        "Text → Image",
+        "Reference → Image",
+        "Image Editing",
+        "Image → Video"
       ],
       "recommended_vram_gb": 16
     },

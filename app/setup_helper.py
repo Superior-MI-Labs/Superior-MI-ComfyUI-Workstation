@@ -6,6 +6,9 @@ import subprocess
 import time
 from pathlib import Path
 
+from core.hardware import observe_hardware
+from core.runtime_profile import observe_runtime
+
 HOME = Path.home()
 RUNTIMES = HOME / "Projects/AI-Runtimes"
 COMFY = RUNTIMES / "ComfyUI"
@@ -43,6 +46,7 @@ def command(name):
 
 
 def detect_gpu():
+    """Legacy GTK projection over the canonical R1 hardware/runtime observers."""
     result = {
         "vendor": "Unknown",
         "name": "Unknown",
@@ -51,30 +55,22 @@ def detect_gpu():
         "cuda_reported": "Unknown",
         "nvidia_ok": False,
     }
-    if command("nvidia-smi"):
-        try:
-            p = subprocess.run(
-                ["nvidia-smi", "--query-gpu=name,memory.total,driver_version", "--format=csv,noheader,nounits"],
-                text=True, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, timeout=5, check=False,
-            )
-            if p.returncode == 0 and p.stdout.strip():
-                row = [x.strip() for x in p.stdout.splitlines()[0].split(",")]
-                result.update({
-                    "vendor": "NVIDIA",
-                    "name": row[0],
-                    "vram_gib": round(float(row[1]) / 1024.0, 2),
-                    "driver": row[2],
-                    "nvidia_ok": True,
-                })
-                q = subprocess.run(["nvidia-smi"], text=True, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, timeout=5)
-                for token in q.stdout.replace("|", " ").split():
-                    pass
-                import re
-                m = re.search(r"CUDA Version:\s*([0-9.]+)", q.stdout)
-                if m:
-                    result["cuda_reported"] = m.group(1)
-        except Exception:
-            pass
+    hardware = observe_hardware(storage_paths=())
+    runtime = observe_runtime()
+    preferred = next((gpu for gpu in hardware.gpus if gpu.vendor == "NVIDIA"), None)
+    gpu = preferred or (hardware.gpus[0] if hardware.gpus else None)
+    if gpu is None:
+        return result
+
+    result.update({
+        "vendor": gpu.vendor,
+        "name": gpu.model,
+        "vram_gib": round(gpu.vram_bytes / (1024**3), 2) if gpu.vram_bytes else 0.0,
+        "driver": gpu.driver or "Unknown",
+        "nvidia_ok": gpu.vendor == "NVIDIA",
+    })
+    if runtime.compute_backend == "cuda" and runtime.backend_version:
+        result["cuda_reported"] = runtime.backend_version
     return result
 
 
