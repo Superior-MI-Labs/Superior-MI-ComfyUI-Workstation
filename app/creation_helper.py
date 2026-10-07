@@ -8,18 +8,19 @@ import urllib.request
 from datetime import datetime
 from pathlib import Path
 
-import character_library
+import shutil
 import preset_manager
 
 HOME = Path.home()
 APP_ROOT = Path(__file__).resolve().parent.parent
 PRESET_BUNDLE = APP_ROOT / "preset_library"
 GENERATED_ROOT = HOME / "Projects" / "AI-Runtimes" / "Qualification" / "presets" / "Superior-MI-Labs" / "Generated"
+COMFY_INPUT = HOME / "Projects" / "AI-Runtimes" / "ComfyUI" / "input"
 
 MODES = {
-    "Character Image (Qwen Image 2.1)": {
+    "Reference Image (Qwen Image 2.1)": {
         "family": "Qwen Image 2.1",
-        "blueprint": "Character/Qwen-Image-2.1/20_Single_Reference.json",
+        "blueprint": "Reference/Qwen-Image-2.1/20_Single_Reference.json",
         "required": ["qwen_image_2.1_int8_convrot.safetensors", "qwen3vl_8b_int8_convrot.safetensors", "qwen_image_2.1_vae_bf16.safetensors"],
     },
     "Text Image (FLUX.2 Klein 4B)": {
@@ -34,7 +35,7 @@ MODES = {
     },
     "Video from Image (Wan2.2 TI2V 5B)": {
         "family": "Wan2.2 TI2V 5B",
-        "blueprint": "Character/Wan2.2-TI2V-5B/13_I2V_Normal_576x1024.json",
+        "blueprint": "Video/Wan2.2-TI2V-5B/13_I2V_Normal_576x1024.json",
         "required": ["wan2.2_ti2v_5B_fp16.safetensors", "umt5_xxl_fp8_e4m3fn_scaled.safetensors", "wan2.2_vae.safetensors"],
     },
 }
@@ -102,8 +103,9 @@ def inspect_workflow_capabilities(workflow: dict) -> dict:
             if m:
                 reference_slots.append(int(m.group(1)))
 
-    # A generic LoadImage is not enough to expose "Source image": Qwen character
-    # Blueprints also contain LoadImage. The typed consumer determines meaning.
+    # A generic LoadImage is not enough to identify an image-to-video source:
+    # Qwen reference Blueprints also contain LoadImage. The typed consumer
+    # determines the graph meaning.
     source_image = False
     for node in workflow.values():
         if not isinstance(node, dict) or node.get("class_type") != "Wan22ImageToVideoLatent":
@@ -113,13 +115,13 @@ def inspect_workflow_capabilities(workflow: dict) -> dict:
             upstream = workflow.get(str(value[0]), {})
             source_image = isinstance(upstream, dict) and upstream.get("class_type") == "LoadImage"
 
-    character_reference = bool(reference_slots)
+    reference_image = bool(reference_slots)
 
     # Qwen reference editing takes its latent geometry from image_1, so an
     # arbitrary orientation picker is misleading there. Text generation and
     # Wan I2V do have explicit output geometry controls.
     format_control = (
-        not character_reference
+        not reference_image
         and bool(classes & {"EmptyLatentImage", "EmptySD3LatentImage", "Wan22ImageToVideoLatent", "ResolutionSelector"})
     )
 
@@ -134,7 +136,7 @@ def inspect_workflow_capabilities(workflow: dict) -> dict:
     )
 
     return {
-        "character": character_reference,
+        "reference_image": reference_image,
         "reference_slots": max(reference_slots, default=0),
         "source_image": source_image,
         "format": format_control,
@@ -168,7 +170,14 @@ def _dimensions(orientation: str, quality: str, video: bool = False):
     return IMAGE_PROFILES[quality]
 
 
-def build_workflow(mode: str, prompt: str, orientation: str = "Square", quality: str = "Normal", character=None, source_image: str | Path | None = None) -> dict:
+def build_workflow(
+    mode: str,
+    prompt: str,
+    orientation: str = "Square",
+    quality: str = "Normal",
+    reference_image: str | Path | None = None,
+    source_image: str | Path | None = None,
+) -> dict:
     prompt = (prompt or "").strip()
     if not prompt:
         raise ValueError("Enter a prompt first.")
@@ -178,23 +187,40 @@ def build_workflow(mode: str, prompt: str, orientation: str = "Square", quality:
         missing = [x for x in MODES[mode]["required"] if x not in preset_manager.scan_model_files()]
         raise RuntimeError("Required model files are missing:\n" + "\n".join(missing))
 
-    if mode == "Character Image (Qwen Image 2.1)":
-        if character is None:
-            raise ValueError("Choose a character first.")
+    if mode == "Reference Image (Qwen Image 2.1)":
+        if not reference_image:
+            raise ValueError("Choose a reference image first.")
+        src = Path(reference_image).expanduser()
+        if not src.exists() or not src.is_file():
+            raise FileNotFoundError(f"Reference image not found: {src}")
+
+        target_dir = COMFY_INPUT / "Superior-MI-References"
+        target_dir.mkdir(parents=True, exist_ok=True)
+        target = target_dir / src.name
+        if not target.exists() or target.stat().st_size != src.stat().st_size:
+            shutil.copy2(src, target)
+        image_rel = str((Path("Superior-MI-References") / target.name).as_posix())
+
         wf = mode_blueprint(mode)
-        image_rel = character_library.copy_to_comfy_input(character)
-        wf["10"]["inputs"]["image"] = image_rel
-        ref_prompt = (
-            f"Use <image1> as the canonical reference sheet for {character.name}. Preserve the character's identity, "
-            f"facial design, hair/fur, body proportions, color palette, signature Superior MI apparel, and defining accessories. "
-            f"Create a new single-scene image, not a reference sheet. {prompt}"
+        load_id = next((key for key, node in wf.items() if node.get("class_type") == "LoadImage"), None)
+        encode_id = next((key for key, node in wf.items() if node.get("class_type") == "TextEncodeQwenImage21"), None)
+        sampler_id = next((key for key, node in wf.items() if node.get("class_type") == "KSampler"), None)
+        save_id = next((key for key, node in wf.items() if node.get("class_type") == "SaveImage"), None)
+        if not all((load_id, encode_id, sampler_id, save_id)):
+            raise RuntimeError("Qwen reference Blueprint is incomplete.")
+
+        wf[load_id]["inputs"]["image"] = image_rel
+        wf[encode_id]["inputs"]["prompt"] = (
+            "Use <image1> as a visual reference. Preserve relevant visual identity, "
+            "shape, color, and design details from the reference while following this request: "
+            + prompt
         )
-        wf["4"]["inputs"]["prompt"] = ref_prompt
-        # Image-edit latent comes from the reference encoder. Resolution is a conditioning target.
-        target = _dimensions(orientation, quality, video=False)
-        wf["4"]["inputs"]["resolution"] = max(target[0], target[1])
-        wf["6"]["inputs"]["steps"] = target[2]
-        wf["8"]["inputs"]["filename_prefix"] = f"SuperiorMI/Characters/{_safe_prefix(character.name)}/{datetime.now():%Y%m%d_%H%M%S}"
+        target_profile = _dimensions(orientation, quality, video=False)
+        wf[encode_id]["inputs"]["resolution"] = max(target_profile[0], target_profile[1])
+        wf[sampler_id]["inputs"]["steps"] = target_profile[2]
+        wf[save_id]["inputs"]["filename_prefix"] = (
+            f"SuperiorMI/Create/QwenReference/{datetime.now():%Y%m%d_%H%M%S}"
+        )
         return wf
 
     if mode == "Text Image (FLUX.2 Klein 4B)":
@@ -223,8 +249,7 @@ def build_workflow(mode: str, prompt: str, orientation: str = "Square", quality:
         if not src.exists() or not src.is_file():
             raise FileNotFoundError(f"Source image not found: {src}")
         # Copy into ComfyUI/input under a stable Workstation subfolder.
-        import shutil
-        target_dir = character_library.COMFY_INPUT / "Superior-MI-Video-Sources"
+        target_dir = COMFY_INPUT / "Superior-MI-Video-Sources"
         target_dir.mkdir(parents=True, exist_ok=True)
         target = target_dir / src.name
         if not target.exists() or target.stat().st_size != src.stat().st_size:
