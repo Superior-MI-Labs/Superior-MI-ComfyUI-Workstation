@@ -52,17 +52,25 @@ class CharacterLibraryTests(unittest.TestCase):
             self.assertEqual(len(chars),1)
             self.assertEqual(chars[0].source_root,'user')
 
-    def test_character_workflow_binds_reference(self):
-        chars = character_library.scan_characters(include_bundled_fallback=True)
-        kisha = next(c for c in chars if c.name == "Kisha")
-        fake_models=set(creation_helper.MODES['Character Image (Qwen Image 2.1)']['required'])
-        with tempfile.TemporaryDirectory() as td, \
-             mock.patch.object(character_library,'COMFY_INPUT',Path(td)), \
-             mock.patch.object(creation_helper.preset_manager,'scan_model_files',return_value=fake_models):
-            wf=creation_helper.build_workflow('Character Image (Qwen Image 2.1)','standing beside Lake Superior','Square','Fast',kisha)
-            self.assertTrue(wf['10']['inputs']['image'].startswith('Superior-MI-Characters/'))
-            self.assertIn('Kisha',wf['4']['inputs']['prompt'])
-            self.assertIn('standing beside Lake Superior',wf['4']['inputs']['prompt'])
+    def test_reference_workflow_binds_generic_image(self):
+        fake_models=set(creation_helper.MODES['Reference Image (Qwen Image 2.1)']['required'])
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td)
+            src=root/'reference.png'; src.write_bytes(b'fake-image')
+            comfy_input=root/'input'
+            with mock.patch.object(creation_helper,'COMFY_INPUT',comfy_input), \
+                 mock.patch.object(creation_helper.preset_manager,'scan_model_files',return_value=fake_models):
+                wf=creation_helper.build_workflow(
+                    'Reference Image (Qwen Image 2.1)',
+                    'standing beside Lake Superior',
+                    'Square',
+                    'Fast',
+                    reference_image=src,
+                )
+        load_id=next(k for k,v in wf.items() if v.get('class_type')=='LoadImage')
+        encode_id=next(k for k,v in wf.items() if v.get('class_type')=='TextEncodeQwenImage21')
+        self.assertTrue(wf[load_id]['inputs']['image'].startswith('Superior-MI-References/'))
+        self.assertIn('standing beside Lake Superior',wf[encode_id]['inputs']['prompt'])
 
 
     def test_text_workflow_profiles_patch_dimensions(self):
@@ -80,7 +88,7 @@ class CharacterLibraryTests(unittest.TestCase):
                 td=Path(td)
                 src=td/'source.png'; src.write_bytes(b'fake-image')
                 comfy_input=td/'input'
-                with mock.patch.object(character_library,'COMFY_INPUT',comfy_input):
+                with mock.patch.object(creation_helper,'COMFY_INPUT',comfy_input):
                     wan=creation_helper.build_workflow('Video from Image (Wan2.2 TI2V 5B)','test motion','Phone Portrait','Normal',source_image=src)
             latent_id=next(k for k,v in wan.items() if v.get('class_type')=='Wan22ImageToVideoLatent')
             sampler_id=next(k for k,v in wan.items() if v.get('class_type')=='KSampler')
