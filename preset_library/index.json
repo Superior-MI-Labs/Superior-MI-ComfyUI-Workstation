@@ -342,7 +342,7 @@
       "category": "Style",
       "family": "Qwen Image 2.1",
       "profile": "Cartoon",
-      "title": "Cartoon Character",
+      "title": "Cartoon Illustration",
       "path": "Styles/Qwen-Image-2.1/10_Cartoon_768_16step.json",
       "description": "Cartoon preset for Qwen Image 2.1 using Euler/simple and CFG 1.",
       "required_files": [
@@ -358,7 +358,7 @@
       "category": "Style",
       "family": "Qwen Image 2.1",
       "profile": "Anthro",
-      "title": "Anthro Character",
+      "title": "Anthro Illustration",
       "path": "Styles/Qwen-Image-2.1/11_Anthro_768_16step.json",
       "description": "Anthro preset for Qwen Image 2.1 using Euler/simple and CFG 1.",
       "required_files": [
