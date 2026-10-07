@@ -40,6 +40,21 @@ def test_local_http_provider_is_allowed_and_structured():
     assert headers == {}
 
 
+def test_v1_base_url_is_not_duplicated():
+    calls = []
+
+    provider = OpenAICompatibleAssistantProvider(
+        "http://localhost:1920/v1",
+        "model",
+        transport=lambda url, payload, headers, timeout: (
+            calls.append(url)
+            or {"choices": [{"message": {"content": '{"kind":"message","message":"ok"}'}}]}
+        ),
+    )
+    provider.propose("hello", {})
+    assert calls == ["http://localhost:1920/v1/chat/completions"]
+
+
 def test_remote_provider_requires_https_and_api_key_is_header_only():
     for bad in (
         "http://example.com",
