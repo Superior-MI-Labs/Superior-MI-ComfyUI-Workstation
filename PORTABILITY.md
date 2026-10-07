@@ -4,7 +4,7 @@ Version 2.2 is qualified for Linux desktop use and currently packages a Debian i
 
 ## Already portable
 
-- character scanning and metadata
+- reference-media and workflow input discovery
 - preset/model catalog data
 - generated ComfyUI workflows
 - HTTP communication with ComfyUI
