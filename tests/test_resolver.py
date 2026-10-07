@@ -56,6 +56,7 @@ def candidate(
     *capabilities,
     backend="cuda",
     min_vram_gib=0,
+    recommended_vram_gib=0,
     download_gib=0,
     package="",
     blueprint="",
@@ -76,6 +77,7 @@ def candidate(
         platforms=("linux",),
         architectures=("x86_64",),
         min_vram_bytes=min_vram_gib * GIB,
+        recommended_vram_bytes=recommended_vram_gib * GIB,
         assets=assets,
         packages=packages,
         blueprint_id=blueprint,
@@ -362,3 +364,56 @@ def test_resolution_is_deterministic_and_candidate_ids_must_be_unique():
         assert "unique" in str(exc)
     else:
         raise AssertionError("duplicate candidate IDs were accepted")
+
+
+
+def test_recommended_vram_warns_but_does_not_reject_candidate():
+    request = CapabilityRequest(("image.generate",))
+    impl = candidate(
+        "soft-fit",
+        "image.generate",
+        recommended_vram_gib=12,
+        quality=10,
+    )
+
+    result = resolve_capabilities(
+        request,
+        hardware(vram_gib=8),
+        runtime(),
+        InstalledInventory(),
+        [impl],
+    )
+
+    row = assessment_map(result)["soft-fit"]
+    assert row.status == "ready"
+    assert row.rejection_reasons == ()
+    assert any("below recommended" in warning for warning in row.warnings)
+    assert result.resolved
+
+
+def test_soft_hardware_fit_breaks_equal_preference_ties():
+    request = CapabilityRequest(("image.generate",), quality_priority="balanced")
+    fits = candidate(
+        "fits",
+        "image.generate",
+        recommended_vram_gib=8,
+        quality=10,
+        evidence=10,
+    )
+    heavy = candidate(
+        "heavy",
+        "image.generate",
+        recommended_vram_gib=16,
+        quality=10,
+        evidence=10,
+    )
+
+    result = resolve_capabilities(
+        request,
+        hardware(vram_gib=8),
+        runtime(),
+        InstalledInventory(),
+        [heavy, fits],
+    )
+
+    assert result.selected_candidate_ids == ("fits",)
