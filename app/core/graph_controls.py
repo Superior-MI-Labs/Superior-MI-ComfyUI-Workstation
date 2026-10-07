@@ -127,6 +127,20 @@ class GraphControlRegistry:
     def by_id(self) -> dict[str, GraphControl]:
         return {control.id: control for control in self.controls}
 
+    @staticmethod
+    def validate_value(control: GraphControl, value: Any) -> None:
+        _validate_value(control, value)
+
+    def validate_changes(self, changes: Mapping[str, Any]) -> None:
+        controls = self.by_id()
+        for control_id, value in changes.items():
+            if control_id not in controls:
+                raise KeyError(f"Unknown graph control: {control_id}")
+            control = controls[control_id]
+            if not control.editable:
+                raise ValueError(f"Graph control is not editable: {control_id}")
+            self.validate_value(control, value)
+
     def visible(self, include_advanced: bool = False, include_hidden: bool = False) -> tuple[GraphControl, ...]:
         allowed = {"primary"}
         if include_advanced:
@@ -137,15 +151,11 @@ class GraphControlRegistry:
 
     def apply(self, prompt: Mapping[str, Any], changes: Mapping[str, Any]) -> dict:
         """Return a copied prompt with validated scalar control changes applied."""
+        self.validate_changes(changes)
         result = copy.deepcopy(prompt)
         controls = self.by_id()
         for control_id, value in changes.items():
-            if control_id not in controls:
-                raise KeyError(f"Unknown graph control: {control_id}")
             control = controls[control_id]
-            if not control.editable:
-                raise ValueError(f"Graph control is not editable: {control_id}")
-            _validate_value(control, value)
             node = result.get(control.node_id)
             if node is None and control.node_id.isdigit():
                 node = result.get(int(control.node_id))
