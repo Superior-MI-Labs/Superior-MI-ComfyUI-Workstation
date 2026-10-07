@@ -2433,7 +2433,7 @@ class AppWindow(Gtk.ApplicationWindow):
         if not e:
             return
         if not preset_manager.compatible(e):
-            stack_id = blueprint_manager.FAMILY_STACK.get(e.get("family",""), "")
+            stack_id = str(e.get("stack_id", ""))
             msg = "This Blueprint needs a model Pack first."
             if stack_id:
                 msg += "\n\nOpen Starter Packs or Components to install its requirements."
