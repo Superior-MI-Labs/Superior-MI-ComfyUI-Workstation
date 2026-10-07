@@ -16,6 +16,16 @@ class GPUProfile:
 
 
 @dataclass(frozen=True)
+class GPUTelemetry:
+    vendor: str = ""
+    model: str = ""
+    used_bytes: int = 0
+    total_bytes: int = 0
+    utilization_percent: int = 0
+    temperature_c: int = 0
+
+
+@dataclass(frozen=True)
 class StorageProfile:
     path: str
     free_bytes: int
