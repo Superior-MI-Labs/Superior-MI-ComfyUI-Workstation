@@ -35,6 +35,21 @@ def post_json(url, payload, timeout=8.0):
         body = r.read().decode("utf-8", "replace")
         return json.loads(body) if body else {}
 
+def _write_bridge_config() -> None:
+    payload = {
+        "schema_version": 1,
+        "app_path": str(APP_ROOT / "app"),
+        "catalog_root": str(APP_ROOT / "catalog" / "r1"),
+        "preset_index": str(APP_ROOT / "preset_library" / "index.json"),
+        "comfy_root": str(COMFY),
+    }
+    BRIDGE_DEST.mkdir(parents=True, exist_ok=True)
+    (BRIDGE_DEST / "_workstation.json").write_text(
+        json.dumps(payload, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+
+
 def ensure_bridge() -> tuple[bool, str]:
     if not COMFY.exists():
         return False, "ComfyUI is not installed in the expected location."
@@ -42,9 +57,11 @@ def ensure_bridge() -> tuple[bool, str]:
         if BRIDGE_DEST.exists():
             # Update only our own bridge files.
             shutil.copytree(BRIDGE_SOURCE, BRIDGE_DEST, dirs_exist_ok=True)
+            _write_bridge_config()
             return True, "Superior MI ComfyUI bridge updated."
         BRIDGE_DEST.parent.mkdir(parents=True, exist_ok=True)
         shutil.copytree(BRIDGE_SOURCE, BRIDGE_DEST)
+        _write_bridge_config()
         return True, "Superior MI ComfyUI bridge installed."
     except Exception as exc:
         return False, str(exc)
