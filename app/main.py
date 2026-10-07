@@ -14,6 +14,7 @@ import time
 import urllib.request
 import sys
 import traceback
+from dataclasses import asdict
 from datetime import datetime
 from pathlib import Path
 
@@ -36,6 +37,7 @@ import comfy_integration
 import execution_client
 import update_manager
 import startup_guard
+from core.hardware import observe_hardware, observe_primary_gpu_telemetry
 
 APP_NAME = "Superior MI Labs - ComfyUI Workstation"
 APP_ID = "com.superiormi.labs.comfyui"
@@ -412,21 +414,13 @@ def collect_status(cfg, include_inventory=False):
         s.state = "STOPPED"
         s.detail = "No ComfyUI runtime process detected."
 
-    rc, out = run_text([
-        "nvidia-smi",
-        "--query-gpu=name,memory.used,memory.total,utilization.gpu,temperature.gpu",
-        "--format=csv,noheader,nounits",
-    ], timeout=3)
-    if rc == 0 and out:
-        try:
-            p = [x.strip() for x in out.splitlines()[0].split(",")]
-            s.gpu_name = p[0]
-            s.gpu_used = int(float(p[1])) * 1024**2
-            s.gpu_total = int(float(p[2])) * 1024**2
-            s.gpu_util = int(float(p[3]))
-            s.gpu_temp = int(float(p[4]))
-        except Exception:
-            pass
+    gpu = observe_primary_gpu_telemetry()
+    if gpu.model:
+        s.gpu_name = gpu.model
+        s.gpu_used = gpu.used_bytes
+        s.gpu_total = gpu.total_bytes
+        s.gpu_util = gpu.utilization_percent
+        s.gpu_temp = gpu.temperature_c
 
     try:
         mem = {}
@@ -3046,7 +3040,11 @@ class AppWindow(Gtk.ApplicationWindow):
                 rc, txt = run_text(cmd, timeout=20, cwd=cwd)
                 sections.append(f"\n=== {title} (rc={rc}) ===\n{txt}\n")
             sections.append(f"{APP_NAME} diagnostics\nGenerated: {datetime.now().isoformat()}\n")
-            add("NVIDIA", ["nvidia-smi"])
+            try:
+                profile = observe_hardware(storage_paths=(COMFY, MODEL_ROOT))
+                sections.append("\n=== HARDWARE PROFILE ===\n" + json.dumps(asdict(profile), indent=2) + "\n")
+            except Exception as exc:
+                sections.append(f"\n=== HARDWARE PROFILE ===\nUnavailable: {exc}\n")
             if COMFY.exists():
                 add("GIT STATUS", ["git", "status", "--short", "--branch"], COMFY)
                 add("GIT HEAD", ["git", "rev-parse", "HEAD"], COMFY)
