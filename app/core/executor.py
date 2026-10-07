@@ -25,6 +25,7 @@ class AssetService(Protocol):
 
 class RuntimeService(Protocol):
     def prepare(self, backend: str) -> str: ...
+    def restart(self) -> str: ...
 
 
 class WorkflowService(Protocol):
@@ -40,6 +41,7 @@ _ACTION_PAYLOADS: dict[str, tuple[frozenset[str], frozenset[str]]] = {
         frozenset({"candidate_id", "license_status"}),
     ),
     "prepare_runtime": (frozenset({"backend"}), frozenset({"backend"})),
+    "restart_runtime": (frozenset(), frozenset()),
     "install_package": (frozenset({"package_id"}), frozenset({"package_id"})),
     "download_asset": (
         frozenset({"asset_id"}),
@@ -259,6 +261,10 @@ class PlanExecutor:
             if self.runtime_service is None:
                 raise RuntimeError("No RuntimeService is configured.")
             return self.runtime_service.prepare(str(payload["backend"]))
+        if action.kind == "restart_runtime":
+            if self.runtime_service is None:
+                raise RuntimeError("No RuntimeService is configured.")
+            return self.runtime_service.restart()
         if action.kind == "install_package":
             if self.package_service is None:
                 raise RuntimeError("No PackageService is configured.")
