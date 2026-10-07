@@ -15,6 +15,7 @@ from .contracts import (
     CapabilityDefinition,
     CapabilityRequest,
     GPUProfile,
+    GPUTelemetry,
     GraphControl,
     HardwareProfile,
     ImplementationCandidate,
@@ -29,7 +30,7 @@ from .contracts import (
 from .assistant import AssistantService, build_assistant_context, validate_assistant_proposal
 from .executor import PlanExecutor, approval_for, fingerprint_action, fingerprint_plan
 from .graph_controls import GraphControlRegistry, derive_graph_controls
-from .hardware import observe_hardware
+from .hardware import observe_hardware, observe_primary_gpu_telemetry
 from .registry import (
     CapabilityRegistry,
     ImplementationRegistry,
@@ -51,6 +52,7 @@ __all__ = [
     "CapabilityRegistry",
     "CapabilityRequest",
     "GPUProfile",
+    "GPUTelemetry",
     "GraphControl",
     "GraphControlRegistry",
     "HardwareProfile",
@@ -73,6 +75,7 @@ __all__ = [
     "load_capability_registry",
     "load_implementation_registry",
     "observe_hardware",
+    "observe_primary_gpu_telemetry",
     "observe_runtime",
     "resolve_capabilities",
     "validate_assistant_proposal",
