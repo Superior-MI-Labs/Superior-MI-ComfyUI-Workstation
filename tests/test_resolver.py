@@ -130,6 +130,7 @@ def test_missing_assets_and_packages_produce_approval_gated_checklist():
         "inspect_runtime",
         "install_package",
         "download_asset",
+        "restart_runtime",
         "load_blueprint",
         "validate_workflow",
     ]
@@ -177,7 +178,10 @@ def test_gpu_candidate_can_be_viable_after_runtime_setup():
     assert rows["gpu"].status == "setup_required"
     assert result.selected_candidate_ids == ("gpu",)
     assert result.plan is not None
-    assert any(action.kind == "prepare_runtime" for action in result.plan.actions)
+    kinds = [action.kind for action in result.plan.actions]
+    assert "prepare_runtime" in kinds
+    assert "restart_runtime" in kinds
+    assert kinds.index("prepare_runtime") < kinds.index("restart_runtime")
 
 
 def test_wrong_hardware_backend_is_rejected_with_reason():
