@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import re
 import subprocess
 import urllib.parse
@@ -100,6 +101,28 @@ def _validate_asset(asset: TrustedModelAsset) -> None:
         path = Path(asset.relative_path)
         if path.is_absolute() or ".." in path.parts:
             raise ValueError(f"Asset {asset.id} relative path escapes the ComfyUI model root.")
+
+
+def load_trusted_asset_registry(path: Path) -> dict[str, TrustedModelAsset]:
+    payload = json.loads(Path(path).read_text(encoding="utf-8"))
+    rows = payload.get("assets", [])
+    if not isinstance(rows, list):
+        raise ValueError("Trusted asset catalog must contain an assets list.")
+
+    assets: dict[str, TrustedModelAsset] = {}
+    for row in rows:
+        if not isinstance(row, dict):
+            raise ValueError("Trusted asset entries must be objects.")
+        asset = TrustedModelAsset(
+            id=str(row["id"]),
+            url=str(row["url"]),
+            relative_path=str(row.get("relative_path", "")),
+        )
+        if asset.id in assets:
+            raise ValueError(f"Trusted asset IDs must be unique: {asset.id}")
+        _validate_asset(asset)
+        assets[asset.id] = asset
+    return assets
 
 
 class ComfyCliAssetService:
