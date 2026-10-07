@@ -6,10 +6,12 @@ sys.path.insert(0, str(APP))
 
 from core.hardware import (
     observe_gpus,
+    observe_primary_gpu_telemetry,
     parse_lspci_gpus,
     parse_os_release_text,
     parse_macos_displays_json,
     parse_nvidia_smi_csv,
+    parse_nvidia_telemetry_csv,
     parse_windows_video_json,
 )
 
@@ -76,3 +78,34 @@ def test_windows_video_controller_parser_is_data_only():
     assert rows[0].driver == "1.2.3"
     # Device detection alone does not prove XPU/CUDA runtime health on Windows.
     assert [gpu.backend_candidates for gpu in rows] == [("xpu",), ("cuda",)]
+
+
+def test_nvidia_telemetry_parser_captures_live_metrics():
+    row = parse_nvidia_telemetry_csv(
+        "NVIDIA Example, 2048, 16384, 72, 67\n"
+    )
+    assert row is not None
+    assert row.vendor == "NVIDIA"
+    assert row.model == "NVIDIA Example"
+    assert row.used_bytes == 2048 * 1024**2
+    assert row.total_bytes == 16384 * 1024**2
+    assert row.utilization_percent == 72
+    assert row.temperature_c == 67
+
+
+def test_primary_gpu_telemetry_falls_back_to_static_profile():
+    outputs = {
+        ("nvidia-smi", "--query-gpu=name,memory.used,memory.total,utilization.gpu,temperature.gpu", "--format=csv,noheader,nounits"): "",
+        ("nvidia-smi", "--query-gpu=name,memory.total,driver_version,compute_cap", "--format=csv,noheader,nounits"): "",
+        ("nvidia-smi", "--query-gpu=name,memory.total,driver_version", "--format=csv,noheader,nounits"): "",
+        ("lspci",): "00:02.0 VGA compatible controller: Intel Corporation Arc Example",
+    }
+
+    def fake_run(command):
+        return outputs.get(tuple(command), "")
+
+    row = observe_primary_gpu_telemetry(system="Linux", run_text=fake_run)
+    assert row.vendor == "Intel"
+    assert "Arc Example" in row.model
+    assert row.used_bytes == 0
+    assert row.utilization_percent == 0
