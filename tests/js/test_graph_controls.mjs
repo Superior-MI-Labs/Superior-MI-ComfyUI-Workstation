@@ -32,7 +32,7 @@ const graph = {
         {
           name: "cfg",
           type: "number",
-          value: 3.5,
+          value: 3,
           options: { min: 0, max: 20, step: 0.1 },
         },
         {
@@ -91,6 +91,7 @@ assert.equal(byId["1.steps"].widget, "slider-number");
 assert.equal(byId["1.steps"].group, "Sampling");
 assert.equal(byId["1.steps"].priority, "primary");
 assert.equal(byId["1.cfg"].priority, "advanced");
+assert.equal(byId["1.cfg"].dataType, "FLOAT");
 assert.equal(byId["1.sampler_name"].widget, "dropdown");
 assert.deepEqual(byId["1.sampler_name"].choices, ["euler", "dpmpp_2m"]);
 assert.equal(byId["2.prompt"].widget, "multiline");
