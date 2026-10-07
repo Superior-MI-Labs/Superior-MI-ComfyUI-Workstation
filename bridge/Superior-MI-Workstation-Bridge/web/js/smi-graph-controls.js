@@ -51,7 +51,7 @@ function widgetKind(widget) {
         return widget?.options?.multiline ? "multiline" : "text";
     }
     if (["image", "video", "audio"].includes(type)) return "file";
-    return "text";
+    return "unsupported";
 }
 
 function dataType(widget) {
@@ -80,6 +80,7 @@ export function deriveGraphControls(graph) {
 
             const classification = classify(widget.name, type);
             const options = widget.options ?? {};
+            const kind = widgetKind(widget);
             controls.push({
                 id: controlId(node, widget),
                 nodeId: String(node.id),
@@ -87,7 +88,7 @@ export function deriveGraphControls(graph) {
                 inputName: String(widget.name),
                 dataType: dataType(widget),
                 value: widget.value,
-                widget: widgetKind(widget),
+                widget: kind,
                 label: String(widget.label ?? humanize(widget.name)),
                 group: classification.group,
                 priority: classification.priority,
@@ -95,6 +96,7 @@ export function deriveGraphControls(graph) {
                 maximum: options.max ?? null,
                 step: options.step ?? null,
                 choices: choicesFor(widget),
+                editable: kind !== "unsupported" && kind !== "file",
             });
         }
     }
@@ -135,6 +137,9 @@ export function validateControlValue(control, value) {
 }
 
 export function writeLiveControlValue(graph, control, value, markDirty = () => {}) {
+    if (control.editable === false) {
+        throw new Error(`Graph control is not editable: ${control.id}`);
+    }
     validateControlValue(control, value);
     const live = findLiveWidget(graph, control);
     if (!live) {
