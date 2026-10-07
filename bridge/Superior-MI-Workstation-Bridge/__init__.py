@@ -34,6 +34,23 @@ async def superior_mi_core_status(request):
     return web.json_response(workstation_runtime.core_status())
 
 
+@PromptServer.instance.routes.post("/superior-mi/plan")
+async def superior_mi_plan(request):
+    if not _is_local_request(request):
+        return web.json_response(
+            {"ok": False, "error": "Planning is local-only in Core R1."},
+            status=403,
+        )
+    try:
+        data = await request.json()
+        result = await asyncio.to_thread(workstation_runtime.plan, data)
+        return web.json_response(result)
+    except (ValueError, KeyError) as exc:
+        return web.json_response({"ok": False, "error": str(exc)}, status=400)
+    except Exception as exc:
+        return web.json_response({"ok": False, "error": str(exc)}, status=500)
+
+
 @PromptServer.instance.routes.post("/superior-mi/assistant/propose")
 async def superior_mi_assistant_propose(request):
     if not _is_local_request(request):
