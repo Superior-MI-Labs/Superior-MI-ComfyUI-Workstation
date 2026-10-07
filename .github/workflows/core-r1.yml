@@ -24,6 +24,13 @@ jobs:
         run: python -m pip install --upgrade pip pytest
       - name: Compile Python
         run: python -m compileall -q app tests
+      - name: Check shell script syntax
+        run: |
+          bash -n install.sh
+          bash -n uninstall.sh
+          for source in scripts/*.sh; do
+            bash -n "$source"
+          done
       - name: Check bridge JavaScript syntax
         run: |
           for source in bridge/Superior-MI-Workstation-Bridge/web/js/*.js; do
@@ -39,7 +46,7 @@ jobs:
           python - <<'PY'
           import json
           from pathlib import Path
-          paths = list(Path("catalog").rglob("*.json")) + list(Path("preset_library").rglob("*.json"))
+          paths = [path for path in Path(".").rglob("*.json") if ".git" not in path.parts]
           for path in paths:
               json.loads(path.read_text(encoding="utf-8"))
           print(f"validated_json={len(paths)}")
