@@ -24,6 +24,10 @@ jobs:
         run: python -m pip install --upgrade pip pytest
       - name: Compile Python
         run: python -m compileall -q app tests
+      - name: Check bridge JavaScript syntax
+        run: |
+          cp bridge/Superior-MI-Workstation-Bridge/web/js/superior-mi-workstation.js /tmp/superior-mi-workstation.mjs
+          node --check /tmp/superior-mi-workstation.mjs
       - name: Validate JSON assets
         run: |
           python - <<'PY'
