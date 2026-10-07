@@ -130,6 +130,7 @@ def test_asset_service_downloads_only_pre_registered_asset():
     assert service.download("model.example") == "ok"
     assert commands == [[
         "/usr/bin/comfy",
+        "--skip-prompt",
         "--workspace=/srv/ComfyUI",
         "model",
         "download",
