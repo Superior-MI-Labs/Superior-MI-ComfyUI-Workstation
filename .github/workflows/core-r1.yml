@@ -26,8 +26,14 @@ jobs:
         run: python -m compileall -q app tests
       - name: Check bridge JavaScript syntax
         run: |
-          cp bridge/Superior-MI-Workstation-Bridge/web/js/superior-mi-workstation.js /tmp/superior-mi-workstation.mjs
-          node --check /tmp/superior-mi-workstation.mjs
+          for source in bridge/Superior-MI-Workstation-Bridge/web/js/*.js; do
+            name="$(basename "$source" .js)"
+            cp "$source" "/tmp/$name.mjs"
+            node --check "/tmp/$name.mjs"
+          done
+      - name: Test graph control JavaScript
+        run: |
+          node tests/js/test_graph_controls.mjs /tmp/smi-graph-controls.mjs
       - name: Validate JSON assets
         run: |
           python - <<'PY'
