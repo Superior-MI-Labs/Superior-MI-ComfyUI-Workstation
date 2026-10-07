@@ -59,7 +59,11 @@ function dataType(widget) {
     if (type === "combo") return "COMBO";
     if (BOOLEAN_TYPES.has(type)) return "BOOLEAN";
     if (NUMERIC_TYPES.has(type)) {
-        return Number.isInteger(widget?.value) ? "INT" : "FLOAT";
+        const options = widget?.options ?? {};
+        const numericHints = [options.min, options.max, options.step]
+            .filter((value) => typeof value === "number");
+        const hasFractionalConstraint = numericHints.some((value) => !Number.isInteger(value));
+        return hasFractionalConstraint || !Number.isInteger(widget?.value) ? "FLOAT" : "INT";
     }
     if (TEXT_TYPES.has(type)) return "STRING";
     if (["image", "video", "audio"].includes(type)) return type.toUpperCase();
