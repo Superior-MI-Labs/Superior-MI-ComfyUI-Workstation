@@ -201,3 +201,19 @@ class PlanExecutionResult:
     @property
     def blocked(self) -> bool:
         return any(action.status == "blocked" for action in self.actions)
+
+
+@dataclass(frozen=True)
+class AssistantProposal:
+    kind: str
+    capability_request: CapabilityRequest | None = None
+    graph_changes: Mapping[str, Any] = field(default_factory=dict)
+    message: str = ""
+
+
+@dataclass(frozen=True)
+class AssistantContext:
+    capability_ids: tuple[str, ...]
+    graph_controls: tuple[GraphControl, ...] = ()
+    hardware_summary: Mapping[str, Any] = field(default_factory=dict)
+    runtime_summary: Mapping[str, Any] = field(default_factory=dict)
