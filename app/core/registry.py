@@ -104,6 +104,7 @@ def load_implementation_registry(path: Path) -> ImplementationRegistry:
                 platforms=tuple(str(x) for x in row.get("platforms", [])),
                 architectures=tuple(str(x) for x in row.get("architectures", [])),
                 min_vram_bytes=max(0, int(row.get("min_vram_bytes", 0))),
+                recommended_vram_bytes=max(0, int(row.get("recommended_vram_bytes", 0))),
                 min_ram_bytes=max(0, int(row.get("min_ram_bytes", 0))),
                 assets=_asset_rows(row.get("assets", [])),
                 packages=tuple(str(x) for x in row.get("packages", [])),
