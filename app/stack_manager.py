@@ -51,6 +51,11 @@ def _run(cmd, cwd=None):
 def download_stack(stack, authorized=False, progress=None):
     if stack.get("license_restricted") and not authorized:
         raise PermissionError("This stack is marked license-restricted. Confirm you have applicable authorization/rights before downloading.")
+    if stack.get("custom_nodes"):
+        raise RuntimeError(
+            "Legacy direct-Git custom-node installation is disabled. "
+            "Resolve custom nodes through the Workstation R1 package service / ComfyUI-Manager."
+        )
     hf=find_hf()
     if not Path(hf).exists() and not shutil.which("hf"):
         raise RuntimeError("Hugging Face 'hf' CLI not found. Install huggingface_hub first.")
@@ -82,14 +87,6 @@ def download_stack(stack, authorized=False, progress=None):
         results.append(f"OK {name} -> {target}")
         names.add(name)
 
-    for node in stack.get("custom_nodes",[]):
-        dest=COMFY/"custom_nodes"/node["folder"]
-        if dest.exists() and (dest/".git").exists():
-            if progress: progress(f"Updating custom node: {node['folder']}")
-            _run(["git","-C",str(dest),"pull","--ff-only"])
-        elif not dest.exists():
-            if progress: progress(f"Installing custom node: {node['folder']}")
-            _run(["git","clone",node["repo"],str(dest)])
     return "\n".join(results) or "No downloadable assets in this catalog entry."
 
 def install_workflows(stack, progress=None):
