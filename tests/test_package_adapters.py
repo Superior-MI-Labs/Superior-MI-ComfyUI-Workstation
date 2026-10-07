@@ -59,6 +59,7 @@ def test_package_service_builds_fixed_argv_and_does_not_use_shell():
     assert service.install("comfyui-example") == "ok"
     assert commands == [[
         "/usr/bin/comfy",
+        "--skip-prompt",
         "--workspace=/srv/ComfyUI",
         "node",
         "install",
