@@ -68,6 +68,7 @@ class ComfyCliPackageService:
 
         command = [
             self.comfy_binary,
+            "--skip-prompt",
             f"--workspace={self.workspace}",
             "node",
             "install",
@@ -130,6 +131,7 @@ class ComfyCliAssetService:
 
         command = [
             self.comfy_binary,
+            "--skip-prompt",
             f"--workspace={self.workspace}",
             "model",
             "download",
