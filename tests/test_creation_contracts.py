@@ -31,7 +31,7 @@ def test_reference_control_is_graph_derived():
 
 def test_text_modes_do_not_offer_reference_control():
     assert creation_helper.mode_capabilities("Text Image (Qwen Image 2.1)")["reference_image"] is False
-    assert creation_helper.mode_capabilities("Text Image (FLUX.2 Klein 4B)")["character"] is False
+    assert "character" not in creation_helper.mode_capabilities("Text Image (FLUX.2 Klein 4B)")
 
 def test_wan_i2v_offers_source_image_not_reference():
     caps = creation_helper.mode_capabilities("Video from Image (Wan2.2 TI2V 5B)")
