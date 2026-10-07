@@ -74,14 +74,27 @@ def assess_candidate(
             f"Runtime backend {candidate.backend!r} must be prepared; current backend is {runtime.compute_backend or 'unknown'!r}."
         )
 
-    if candidate.min_vram_bytes > 0 and candidate.backend != "cpu":
+    observed_vram = 0
+    if candidate.backend != "cpu":
         observed_vram = _max_vram_for_backend(hardware, candidate.backend)
+
+    if candidate.min_vram_bytes > 0 and candidate.backend != "cpu":
         if observed_vram == 0:
             setup.append("GPU VRAM could not be verified for this backend.")
         elif observed_vram < candidate.min_vram_bytes:
             rejection.append(
                 f"Observed VRAM {observed_vram} bytes is below required {candidate.min_vram_bytes} bytes."
             )
+
+    if (
+        candidate.recommended_vram_bytes > 0
+        and observed_vram > 0
+        and observed_vram < candidate.recommended_vram_bytes
+    ):
+        warnings.append(
+            f"Observed VRAM {observed_vram} bytes is below recommended "
+            f"{candidate.recommended_vram_bytes} bytes; offload or smaller settings may be needed."
+        )
 
     if candidate.min_ram_bytes > 0:
         if hardware.memory_total_bytes == 0:
@@ -147,6 +160,7 @@ class _Choice:
     backend: str
     setup_count: int
     preference_score: int
+    hardware_fit_score: int
     evidence_score: int
     stability_score: int
     required_download_bytes: int
@@ -159,6 +173,7 @@ def _choice_key(choice: _Choice) -> tuple:
     count = max(1, len(choice.ids))
     return (
         Fraction(choice.preference_score, count),
+        Fraction(choice.hardware_fit_score, count),
         Fraction(choice.evidence_score, count),
         Fraction(choice.stability_score, count),
         -choice.setup_count,
@@ -177,6 +192,15 @@ def _better(candidate: _Choice, current: _Choice | None) -> bool:
     return candidate.ids < current.ids
 
 
+def _hardware_fit_score(hardware: HardwareProfile, candidate: ImplementationCandidate) -> int:
+    if candidate.backend == "cpu" or candidate.recommended_vram_bytes <= 0:
+        return 0
+    observed = _max_vram_for_backend(hardware, candidate.backend)
+    if observed <= 0:
+        return 0
+    return 1 if observed >= candidate.recommended_vram_bytes else -1
+
+
 def _merge_backend(existing: str, candidate_backend: str) -> str | None:
     if candidate_backend == "cpu":
         return existing
@@ -191,6 +215,7 @@ def _merge_backend(existing: str, candidate_backend: str) -> str | None:
 
 def _select_candidates(
     request: CapabilityRequest,
+    hardware: HardwareProfile,
     inventory: InstalledInventory,
     candidates: tuple[ImplementationCandidate, ...],
     assessments: dict[str, CandidateAssessment],
@@ -208,7 +233,7 @@ def _select_candidates(
     viable.sort(key=lambda candidate: candidate.id)
 
     states: dict[tuple[int, str], _Choice] = {
-        (0, ""): _Choice((), 0, "", 0, 0, 0, 0, 0, frozenset())
+        (0, ""): _Choice((), 0, "", 0, 0, 0, 0, 0, 0, frozenset())
     }
 
     for candidate in viable:
@@ -246,6 +271,7 @@ def _select_candidates(
                 setup_count=prior.setup_count + (1 if assessment.status == "setup_required" else 0),
                 preference_score=prior.preference_score
                 + int(candidate.preference_scores.get(request.quality_priority, 0)),
+                hardware_fit_score=prior.hardware_fit_score + _hardware_fit_score(hardware, candidate),
                 evidence_score=prior.evidence_score + max(0, int(candidate.evidence_score)),
                 stability_score=prior.stability_score + _STABILITY.get(candidate.stability, 0),
                 required_download_bytes=prior.required_download_bytes + incremental_download,
@@ -412,7 +438,7 @@ def resolve_capabilities(
         for candidate in ordered
     }
 
-    selected_ids = _select_candidates(request, inventory, ordered, assessments)
+    selected_ids = _select_candidates(request, hardware, inventory, ordered, assessments)
     selected_set = set(selected_ids)
     selected = tuple(candidate for candidate in ordered if candidate.id in selected_set)
 
