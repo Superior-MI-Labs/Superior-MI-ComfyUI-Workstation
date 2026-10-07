@@ -31,6 +31,21 @@ class FakeAssetService:
         return f"downloaded:{asset_id}"
 
 
+
+
+class FakeRuntimeService:
+    def __init__(self):
+        self.calls = []
+
+    def prepare(self, backend):
+        self.calls.append(("prepare", backend))
+        return f"prepared:{backend}"
+
+    def restart(self):
+        self.calls.append(("restart", None))
+        return "restarted"
+
+
 class FakeWorkflowService:
     def __init__(self):
         self.calls = []
@@ -265,3 +280,31 @@ def test_jsonl_journal_survives_process_reconstruction():
 
 def test_plan_fingerprint_is_stable_for_same_content():
     assert fingerprint_plan(setup_plan()) == fingerprint_plan(setup_plan())
+
+
+
+def test_runtime_restart_is_a_registered_explicit_action():
+    runtime = FakeRuntimeService()
+    plan = ActionPlan(
+        id="runtime",
+        title="Runtime",
+        actions=(
+            PlanAction(
+                id="prepare",
+                kind="prepare_runtime",
+                title="Prepare CUDA",
+                requires_approval=True,
+                payload={"backend": "cuda"},
+            ),
+            PlanAction(
+                id="restart",
+                kind="restart_runtime",
+                title="Restart",
+            ),
+        ),
+    )
+    approval = approval_for(plan, {"prepare"})
+    result = PlanExecutor(runtime_service=runtime).execute(plan, approval)
+
+    assert result.completed
+    assert runtime.calls == [("prepare", "cuda"), ("restart", None)]
