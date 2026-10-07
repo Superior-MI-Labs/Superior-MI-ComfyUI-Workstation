@@ -287,6 +287,7 @@ def _build_plan(
         ),
     ]
 
+    mutation_requires_restart = False
     gpu_backends = sorted({candidate.backend for candidate in selected if candidate.backend != "cpu"})
     if gpu_backends and runtime.compute_backend not in gpu_backends:
         backend = gpu_backends[0]
@@ -299,12 +300,14 @@ def _build_plan(
                 payload={"backend": backend},
             )
         )
+        mutation_requires_restart = True
 
     seen_license: set[str] = set()
     seen_packages: set[str] = set()
     seen_assets: set[str] = set()
-    seen_blueprints: set[str] = set()
+    blueprint_ids: list[str] = []
 
+    # Phase 1: approvals and environment/package/model mutations.
     for candidate in sorted(selected, key=lambda item: item.id):
         if candidate.license_status in {"acknowledgement", "restricted"} and candidate.id not in seen_license:
             actions.append(
@@ -331,6 +334,7 @@ def _build_plan(
                 )
             )
             seen_packages.add(package)
+            mutation_requires_restart = True
 
         for asset in sorted(candidate.assets, key=lambda item: item.id):
             if asset.id in inventory.asset_ids or asset.id in seen_assets:
@@ -345,17 +349,32 @@ def _build_plan(
                 )
             )
             seen_assets.add(asset.id)
+            mutation_requires_restart = True
 
-        if candidate.blueprint_id and candidate.blueprint_id not in seen_blueprints:
-            actions.append(
-                PlanAction(
-                    id=f"blueprint.{candidate.blueprint_id}",
-                    kind="load_blueprint",
-                    title=f"Load workflow {candidate.blueprint_id}",
-                    payload={"blueprint_id": candidate.blueprint_id},
-                )
+        if candidate.blueprint_id and candidate.blueprint_id not in blueprint_ids:
+            blueprint_ids.append(candidate.blueprint_id)
+
+    # Phase 2: make the runtime observe any changed environment before loading
+    # and validating workflows against live /object_info.
+    if mutation_requires_restart:
+        actions.append(
+            PlanAction(
+                id="runtime.restart",
+                kind="restart_runtime",
+                title="Restart ComfyUI runtime",
             )
-            seen_blueprints.add(candidate.blueprint_id)
+        )
+
+    # Phase 3: load graph truth, then validate it against the restarted runtime.
+    for blueprint_id in blueprint_ids:
+        actions.append(
+            PlanAction(
+                id=f"blueprint.{blueprint_id}",
+                kind="load_blueprint",
+                title=f"Load workflow {blueprint_id}",
+                payload={"blueprint_id": blueprint_id},
+            )
+        )
 
     actions.append(
         PlanAction(
@@ -372,7 +391,6 @@ def _build_plan(
         actions=tuple(actions),
         summary=f"Selected: {selected_titles}",
     )
-
 
 def resolve_capabilities(
     request: CapabilityRequest,
