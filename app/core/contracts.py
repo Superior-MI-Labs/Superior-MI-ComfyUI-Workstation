@@ -172,3 +172,32 @@ class ResolutionResult:
     @property
     def resolved(self) -> bool:
         return not self.unresolved_capabilities and self.plan is not None
+
+
+@dataclass(frozen=True)
+class PlanApproval:
+    plan_fingerprint: str
+    action_ids: frozenset[str]
+
+
+@dataclass(frozen=True)
+class ActionExecution:
+    action_id: str
+    status: str
+    message: str = ""
+
+
+@dataclass(frozen=True)
+class PlanExecutionResult:
+    plan_id: str
+    plan_fingerprint: str
+    actions: tuple[ActionExecution, ...]
+    completed: bool
+
+    @property
+    def failed(self) -> bool:
+        return any(action.status == "failed" for action in self.actions)
+
+    @property
+    def blocked(self) -> bool:
+        return any(action.status == "blocked" for action in self.actions)
