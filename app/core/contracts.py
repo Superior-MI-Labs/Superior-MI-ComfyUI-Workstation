@@ -149,6 +149,7 @@ class ImplementationCandidate:
     platforms: tuple[str, ...] = ()
     architectures: tuple[str, ...] = ()
     min_vram_bytes: int = 0
+    recommended_vram_bytes: int = 0
     min_ram_bytes: int = 0
     assets: tuple[AssetRequirement, ...] = ()
     packages: tuple[str, ...] = ()
