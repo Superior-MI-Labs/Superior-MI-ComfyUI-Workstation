@@ -9,7 +9,7 @@ import subprocess
 from pathlib import Path
 from typing import Callable, Iterable
 
-from .contracts import GPUProfile, HardwareProfile, StorageProfile
+from .contracts import GPUProfile, GPUTelemetry, HardwareProfile, StorageProfile
 
 RunText = Callable[[list[str]], str]
 
@@ -75,6 +75,41 @@ def parse_nvidia_smi_csv(text: str) -> tuple[GPUProfile, ...]:
             )
         )
     return tuple(gpus)
+
+
+def parse_nvidia_telemetry_csv(text: str) -> GPUTelemetry | None:
+    for line in text.splitlines():
+        if not line.strip():
+            continue
+        parts = [part.strip() for part in line.split(",")]
+        if len(parts) < 5:
+            continue
+        model, used_mib, total_mib, utilization, temperature = parts[:5]
+        try:
+            used = int(float(used_mib) * 1024**2)
+        except ValueError:
+            used = 0
+        try:
+            total = int(float(total_mib) * 1024**2)
+        except ValueError:
+            total = 0
+        try:
+            util = int(float(utilization))
+        except ValueError:
+            util = 0
+        try:
+            temp = int(float(temperature))
+        except ValueError:
+            temp = 0
+        return GPUTelemetry(
+            vendor="NVIDIA",
+            model=model,
+            used_bytes=used,
+            total_bytes=total,
+            utilization_percent=util,
+            temperature_c=temp,
+        )
+    return None
 
 
 def parse_lspci_gpus(text: str) -> tuple[GPUProfile, ...]:
@@ -213,6 +248,34 @@ def observe_gpus(system: str | None = None, run_text: RunText = _run_text) -> tu
         return _merge_gpus(nvidia, pci)
 
     return ()
+
+
+def observe_primary_gpu_telemetry(
+    system: str | None = None,
+    run_text: RunText = _run_text,
+) -> GPUTelemetry:
+    system = system or platform_module.system()
+
+    if system == "Linux":
+        raw = run_text([
+            "nvidia-smi",
+            "--query-gpu=name,memory.used,memory.total,utilization.gpu,temperature.gpu",
+            "--format=csv,noheader,nounits",
+        ])
+        telemetry = parse_nvidia_telemetry_csv(raw)
+        if telemetry is not None:
+            return telemetry
+
+    gpus = observe_gpus(system=system, run_text=run_text)
+    if gpus:
+        gpu = gpus[0]
+        return GPUTelemetry(
+            vendor=gpu.vendor,
+            model=gpu.model,
+            total_bytes=gpu.vram_bytes,
+        )
+
+    return GPUTelemetry()
 
 
 def _linux_cpu_model() -> str:
