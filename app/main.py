@@ -1397,10 +1397,9 @@ class AppWindow(Gtk.ApplicationWindow):
         self.create_mode = Gtk.ComboBoxText()
         self.create_mode.connect("changed", lambda *_: self.create_mode_changed())
 
-        self.create_character = Gtk.ComboBoxText()
         self.create_source_entry = Gtk.Entry()
         self.create_source_entry.set_editable(False)
-        self.create_source_entry.set_placeholder_text("Choose an image to animate")
+        self.create_source_entry.set_placeholder_text("Choose a reference or source image")
         choose_source = Gtk.Button(label="Choose Image…")
         choose_source.connect("clicked", lambda *_: self.choose_create_source())
         latest_source = Gtk.Button(label="Use Latest Output")
@@ -1422,7 +1421,6 @@ class AppWindow(Gtk.ApplicationWindow):
 
         rows = [
             ("mode", "Create", self.create_mode),
-            ("character", "Character", self.create_character),
             ("source_image", "Source image", source_row),
             ("format", "Format", self.create_orientation),
             ("quality", "Quality", self.create_quality),
@@ -1509,7 +1507,6 @@ class AppWindow(Gtk.ApplicationWindow):
 
     def refresh_create_panel(self):
         modes = creation_helper.installed_modes()
-        self.characters_cache = character_library.scan_characters()
         current_mode = self._normalized_create_mode() if hasattr(self, "create_mode") else None
         self.create_mode.remove_all()
         keys = list(modes)
@@ -1520,17 +1517,10 @@ class AppWindow(Gtk.ApplicationWindow):
         if keys:
             self.create_mode.set_active(idx)
 
-        self.create_character.remove_all()
-        for c in self.characters_cache:
-            collection = c.collection or "Custom"
-            self.create_character.append(c.uid, f"{c.name}  •  {collection}")
-        if self.characters_cache:
-            self.create_character.set_active(0)
-
-        ready_count = sum(1 for v in modes.values() if v)
+        ready_count = sum(1 for value in modes.values() if value)
         runtime = "running" if self.last_status and self.last_status.http else "stopped"
         self.create_status.set_text(
-            f"{ready_count}/{len(modes)} creation methods ready • {len(self.characters_cache)} characters • ComfyUI {runtime}"
+            f"{ready_count}/{len(modes)} creation methods ready • ComfyUI {runtime}"
         )
         self.create_mode_changed()
         return False
@@ -1547,26 +1537,35 @@ class AppWindow(Gtk.ApplicationWindow):
             widget.set_visible(bool(visible))
 
     def create_mode_changed(self):
-        if not hasattr(self, "create_character"):
+        if not hasattr(self, "create_mode"):
             return
         mode = self._normalized_create_mode()
         if mode not in creation_helper.MODES:
             return
 
         caps = creation_helper.mode_capabilities(mode)
-        needs_character = bool(caps["character"])
+        needs_reference = bool(caps["reference_image"])
         needs_source = bool(caps["source_image"])
+        needs_media = needs_reference or needs_source
 
-        # The simple Create surface mirrors the selected Blueprint. Controls
-        # that the graph cannot consume are not shown at all.
-        self._set_create_row_visible("character", needs_character)
-        self._set_create_row_visible("source_image", needs_source)
+        # Legacy GTK compatibility projection. Native R1 Create derives controls
+        # directly from the live ComfyUI graph.
+        self._set_create_row_visible("source_image", needs_media)
         self._set_create_row_visible("format", bool(caps["format"]))
         self._set_create_row_visible("quality", bool(caps["quality"]))
 
+        source_row = getattr(self, "create_rows", {}).get("source_image")
+        if source_row:
+            source_row[0].set_text("Reference image" if needs_reference else "Source image")
+        self.create_source_entry.set_placeholder_text(
+            "Choose a reference image" if needs_reference else "Choose an image to animate"
+        )
+
         semantic = ["Prompt"]
-        if needs_character:
-            semantic.append(f"Character reference ({caps['reference_slots']} slot{'s' if caps['reference_slots'] != 1 else ''})")
+        if needs_reference:
+            semantic.append(
+                f"Reference image ({caps['reference_slots']} slot{'s' if caps['reference_slots'] != 1 else ''})"
+            )
         if needs_source:
             semantic.append("Source image")
         if caps["format"]:
@@ -1576,10 +1575,7 @@ class AppWindow(Gtk.ApplicationWindow):
         self.create_contract.set_text("This setup uses: " + " • ".join(semantic))
 
         ready = creation_helper.installed_modes().get(mode, False)
-        has_inputs = (
-            (not needs_character or bool(self.characters_cache))
-            and (not needs_source or bool(self.create_source_path))
-        )
+        has_inputs = not needs_media or bool(self.create_source_path)
         self.create_workflow_btn.set_sensitive(ready and has_inputs and not self.create_running)
         running = bool(self.last_status and self.last_status.http)
         self.create_queue_btn.set_sensitive(ready and running and has_inputs and not self.create_running)
@@ -1588,11 +1584,6 @@ class AppWindow(Gtk.ApplicationWindow):
         buf = self.create_prompt.get_buffer()
         return buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True).strip()
 
-    def _active_character(self):
-        uid = self.create_character.get_active_id()
-        if not uid:
-            return None
-        return character_library.find_character(uid, self.characters_cache)
 
     def choose_create_source(self):
         d = Gtk.FileChooserDialog(
@@ -1632,19 +1623,27 @@ class AppWindow(Gtk.ApplicationWindow):
         orientation = self.create_orientation.get_active_text() or "Square"
         quality = self.create_quality.get_active_text() or "Normal"
         caps = creation_helper.mode_capabilities(mode)
-        character = self._active_character() if caps.get("character") else None
+        reference = self.create_source_path if caps.get("reference_image") else None
         source = self.create_source_path if caps.get("source_image") else None
-        return mode, creation_helper.build_workflow(mode, prompt, orientation, quality, character, source_image=source), character
+        workflow = creation_helper.build_workflow(
+            mode,
+            prompt,
+            orientation,
+            quality,
+            reference_image=reference,
+            source_image=source,
+        )
+        return mode, workflow
 
-    def _workflow_label(self, mode, character=None):
+    def _workflow_label(self, mode):
         quality = self.create_quality.get_active_text() or "Normal"
         orientation = self.create_orientation.get_active_text() or "Square"
-        return f"{character.name if character else mode}_{quality}_{orientation}_{datetime.now():%H%M%S}"
+        return f"{mode}_{quality}_{orientation}_{datetime.now():%H%M%S}"
 
     def create_quick_workflow(self, queue_now=False):
         try:
-            mode, workflow, character = self._build_current_create_workflow()
-            label = self._workflow_label(mode, character)
+            mode, workflow = self._build_current_create_workflow()
+            label = self._workflow_label(mode)
 
             if not (self.last_status and self.last_status.http):
                 raise RuntimeError("Start ComfyUI first so the Workstation can validate this setup against your local node contracts.")
