@@ -66,10 +66,15 @@ def core_status() -> dict[str, Any]:
         config = modules["config"]
         catalog_root = Path(str(config.get("catalog_root") or ""))
         capabilities = modules["load_capability_registry"](catalog_root / "capabilities.json")
+        entries = sorted(capabilities.entries, key=lambda entry: entry.id)
         return {
             "ok": True,
             "core_available": True,
-            "capability_ids": sorted(capabilities.by_id()),
+            "capability_ids": [entry.id for entry in entries],
+            "capabilities": [
+                {"id": entry.id, "title": entry.title, "description": entry.description}
+                for entry in entries
+            ],
         }
     except Exception as exc:
         return {
