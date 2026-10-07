@@ -87,6 +87,14 @@ capabilities/controls, return clarify or message.
 """
 
 
+def _chat_completions_url(base_url: str) -> str:
+    return (
+        base_url + "/chat/completions"
+        if urllib.parse.urlsplit(base_url).path.rstrip("/").endswith("/v1")
+        else base_url + "/v1/chat/completions"
+    )
+
+
 class OpenAICompatibleAssistantProvider:
     """Optional structured-intent provider for local or remote compatible APIs."""
 
@@ -134,7 +142,7 @@ class OpenAICompatibleAssistantProvider:
             ],
         }
         response = self._transport(
-            self.base_url + "/v1/chat/completions",
+            _chat_completions_url(self.base_url),
             payload,
             headers,
             self.timeout,
