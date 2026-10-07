@@ -16,7 +16,7 @@ The Workstation is organized around four concepts:
 
 - **Blueprints** are reusable creation recipes that translate into real ComfyUI graphs.
 - **Starter Packs** install the model families and components a Blueprint needs.
-- **Characters** provide reusable reference images through an expandable folder-based library.
+- **Reference inputs** let compatible workflows use one or more ordinary images without introducing a domain-specific library.
 - **Create** configures a Blueprint, validates it against the running ComfyUI node contract, queues it, tracks progress, and surfaces the output.
 
 ## Public beta highlights
@@ -24,10 +24,10 @@ The Workstation is organized around four concepts:
 - Guided ComfyUI setup and runtime controls.
 - Beginner-friendly **Create** page for local image and image-to-video workflows.
 - Graph-aware controls: irrelevant options are hidden when a selected Blueprint cannot use them.
-- Qwen Image 2.1 character/reference generation.
+- Qwen Image 2.1 reference-guided generation and editing.
 - FLUX.2 Klein image generation.
 - Wan2.2 TI2V image-to-video support.
-- Expandable Character Library with bundled Superior MI example characters.
+- Multi-reference Qwen Image workflows with graph-derived controls.
 - Starter Packs and curated Components.
 - Live generation progress, elapsed time, output preview, and benchmark history.
 - One-click **Open in ComfyUI** workflow handoff.
@@ -108,7 +108,7 @@ The next major design pass is expected to focus on:
 - Windows and macOS platform adapters;
 - additional image, video, audio, and future model-family integrations.
 
-The underlying direction is stable: one Blueprint system, one model/component authority, one Character library, and ComfyUI as the execution graph/runtime.
+The underlying direction is stable: one Blueprint system, one model/component authority, graph-derived inputs, and ComfyUI as the execution graph/runtime.
 
 ## Known expectations
 
@@ -123,7 +123,7 @@ The underlying direction is stable: one Blueprint system, one model/component au
 WolfCat qualification for 3.0.3 completed with:
 
 - successful application startup;
-- successful Qwen Image 2.1 character/reference generation;
+- successful Qwen Image 2.1 reference-guided generation;
 - output preview inside Create;
 - Blueprint-to-ComfyUI graph handoff;
 - 22/22 automated Workstation tests passing;
@@ -138,7 +138,7 @@ Create
   ↓
 Blueprint
   ├── Pack / model dependencies
-  ├── optional Character or source media
+  ├── optional reference or source media
   ↓
 runtime contract validation
   ↓
@@ -147,7 +147,7 @@ ComfyUI graph
 generation + progress + output
 ```
 
-See [ARCHITECTURE.md](ARCHITECTURE.md), [CHARACTERS.md](CHARACTERS.md), and [PORTABILITY.md](PORTABILITY.md) for deeper design notes.
+See [ARCHITECTURE.md](ARCHITECTURE.md), [docs/WORKSTATION-CORE-R1-PLAN.md](docs/WORKSTATION-CORE-R1-PLAN.md), and [PORTABILITY.md](PORTABILITY.md) for deeper design notes.
 
 ## Checksums
 
