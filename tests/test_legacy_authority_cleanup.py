@@ -88,3 +88,22 @@ def test_legacy_gpu_projection_uses_canonical_r1_observers():
         "cuda_reported": "13.0",
         "nvidia_ok": True,
     }
+
+
+
+def test_deferred_character_payload_is_not_shipped_in_core_r1():
+    assert not (ROOT / "app" / "character_library.py").exists()
+    assert not (ROOT / "assets" / "characters").exists()
+    assert not (ROOT / "preset_library" / "Character").exists()
+    assert not (ROOT / "CHARACTERS.md").exists()
+
+    readme = (ROOT / "README.md").read_text(encoding="utf-8").lower()
+    assert "character library" not in readme
+    assert "bundled superior mi example characters" not in readme
+
+
+def test_gtk_shell_does_not_probe_nvidia_directly():
+    source = (APP / "main.py").read_text(encoding="utf-8")
+    assert "nvidia-smi" not in source
+    assert "observe_primary_gpu_telemetry" in source
+    assert "observe_hardware" in source
