@@ -33,7 +33,7 @@ def _core_modules():
     from adapters.assistant import OpenAICompatibleAssistantProvider
     from adapters.comfy_cli import load_trusted_asset_registry
     from core.assistant import AssistantService, build_assistant_context
-    from core.contracts import GraphControl, InstalledInventory
+    from core.contracts import CapabilityRequest, GraphControl, InstalledInventory
     from core.executor import fingerprint_plan
     from core.graph_controls import GraphControlRegistry
     from core.hardware import observe_hardware
@@ -47,6 +47,7 @@ def _core_modules():
         "load_trusted_asset_registry": load_trusted_asset_registry,
         "AssistantService": AssistantService,
         "build_assistant_context": build_assistant_context,
+        "CapabilityRequest": CapabilityRequest,
         "GraphControl": GraphControl,
         "GraphControlRegistry": GraphControlRegistry,
         "InstalledInventory": InstalledInventory,
@@ -164,6 +165,84 @@ def _assistant_provider(payload: Mapping[str, Any], modules):
     )
 
 
+def _planning_state(payload: Mapping[str, Any], modules):
+    config = modules["config"]
+    catalog_root = Path(str(config.get("catalog_root") or ""))
+
+    capabilities = modules["load_capability_registry"](catalog_root / "capabilities.json")
+    implementations = modules["load_implementation_registry"](catalog_root / "implementations.json")
+    trusted_assets = modules["load_trusted_asset_registry"](catalog_root / "assets.json")
+
+    comfy_root = Path(str(config.get("comfy_root") or ""))
+    hardware = modules["observe_hardware"](storage_paths=(comfy_root / "models",))
+    runtime = modules["observe_runtime"](
+        comfyui_url=_bounded_string(payload.get("comfyui_url"), name="comfyui_url", maximum=500),
+    )
+    inventory = _installed_inventory(config, trusted_assets, modules)
+    return capabilities, implementations, hardware, runtime, inventory
+
+
+def _resolution_payload(resolution, modules) -> dict[str, Any]:
+    result = asdict(resolution)
+    if resolution.plan is not None:
+        result["plan_fingerprint"] = modules["fingerprint_plan"](resolution.plan)
+    return result
+
+
+def plan(payload: Mapping[str, Any]) -> dict[str, Any]:
+    if not isinstance(payload, Mapping):
+        raise ValueError("Request body must be an object.")
+
+    raw_capabilities = payload.get("capabilities")
+    if not isinstance(raw_capabilities, list) or not raw_capabilities:
+        raise ValueError("capabilities must be a non-empty list.")
+
+    capability_ids = tuple(str(value) for value in raw_capabilities)
+    if len(capability_ids) != len(set(capability_ids)):
+        raise ValueError("capabilities must not contain duplicates.")
+
+    quality = _bounded_string(payload.get("quality_priority") or "balanced", name="quality_priority", maximum=20)
+    if quality not in {"balanced", "quality", "speed", "storage"}:
+        raise ValueError("Unsupported quality_priority.")
+
+    local_only = payload.get("local_only", True)
+    if not isinstance(local_only, bool):
+        raise ValueError("local_only must be boolean.")
+
+    storage_budget = payload.get("storage_budget_bytes")
+    if storage_budget is not None:
+        if isinstance(storage_budget, bool) or not isinstance(storage_budget, int) or storage_budget < 0:
+            raise ValueError("storage_budget_bytes must be a non-negative integer or null.")
+
+    modules = _core_modules()
+    capabilities, implementations, hardware, runtime, inventory = _planning_state(payload, modules)
+    known = set(capabilities.by_id())
+    unknown = sorted(set(capability_ids) - known)
+    if unknown:
+        raise ValueError(f"Unknown capabilities: {unknown}")
+
+    request = modules["CapabilityRequest"](
+        capabilities=capability_ids,
+        local_only=local_only,
+        quality_priority=quality,
+        storage_budget_bytes=storage_budget,
+    )
+    resolution = modules["resolve_capabilities"](
+        request,
+        hardware,
+        runtime,
+        inventory,
+        implementations.entries,
+    )
+    return {
+        "ok": True,
+        "capability_request": asdict(request),
+        "resolution": _resolution_payload(resolution, modules),
+        "hardware": asdict(hardware),
+        "runtime": asdict(runtime),
+    }
+
+
 def propose(payload: Mapping[str, Any]) -> dict[str, Any]:
     if not isinstance(payload, Mapping):
         raise ValueError("Request body must be an object.")
@@ -176,20 +255,8 @@ def propose(payload: Mapping[str, Any]) -> dict[str, Any]:
     )
 
     modules = _core_modules()
-    config = modules["config"]
-    catalog_root = Path(str(config.get("catalog_root") or ""))
-    preset_index = Path(str(config.get("preset_index") or ""))
-
-    capabilities = modules["load_capability_registry"](catalog_root / "capabilities.json")
-    implementations = modules["load_implementation_registry"](catalog_root / "implementations.json")
-    trusted_assets = modules["load_trusted_asset_registry"](catalog_root / "assets.json")
+    capabilities, implementations, hardware, runtime, inventory = _planning_state(payload, modules)
     controls = _graph_registry(payload.get("graph_controls"), modules)
-
-    comfy_root = Path(str(config.get("comfy_root") or ""))
-    hardware = modules["observe_hardware"](storage_paths=(comfy_root / "models",))
-    runtime = modules["observe_runtime"](
-        comfyui_url=_bounded_string(payload.get("comfyui_url"), name="comfyui_url", maximum=500),
-    )
 
     context = modules["build_assistant_context"](
         capabilities,
@@ -209,7 +276,6 @@ def propose(payload: Mapping[str, Any]) -> dict[str, Any]:
     }
 
     if proposal.kind == "capability_request" and proposal.capability_request is not None:
-        inventory = _installed_inventory(config, trusted_assets, modules)
         resolution = modules["resolve_capabilities"](
             proposal.capability_request,
             hardware,
@@ -217,9 +283,6 @@ def propose(payload: Mapping[str, Any]) -> dict[str, Any]:
             inventory,
             implementations.entries,
         )
-        resolution_payload = asdict(resolution)
-        if resolution.plan is not None:
-            resolution_payload["plan_fingerprint"] = modules["fingerprint_plan"](resolution.plan)
-        response["resolution"] = resolution_payload
+        response["resolution"] = _resolution_payload(resolution, modules)
 
     return response
