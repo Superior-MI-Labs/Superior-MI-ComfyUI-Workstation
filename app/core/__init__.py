@@ -8,6 +8,8 @@ facts, and evidence.
 from .contracts import (
     ActionExecution,
     ActionPlan,
+    AssistantContext,
+    AssistantProposal,
     AssetRequirement,
     CandidateAssessment,
     CapabilityDefinition,
@@ -24,6 +26,7 @@ from .contracts import (
     RuntimeProfile,
     StorageProfile,
 )
+from .assistant import AssistantService, build_assistant_context, validate_assistant_proposal
 from .executor import PlanExecutor, approval_for, fingerprint_action, fingerprint_plan
 from .graph_controls import GraphControlRegistry, derive_graph_controls
 from .hardware import observe_hardware
@@ -39,6 +42,9 @@ from .runtime_profile import observe_runtime
 __all__ = [
     "ActionExecution",
     "ActionPlan",
+    "AssistantContext",
+    "AssistantProposal",
+    "AssistantService",
     "AssetRequirement",
     "CandidateAssessment",
     "CapabilityDefinition",
@@ -59,6 +65,7 @@ __all__ = [
     "RuntimeProfile",
     "StorageProfile",
     "approval_for",
+    "build_assistant_context",
     "assess_candidate",
     "derive_graph_controls",
     "fingerprint_action",
@@ -68,4 +75,5 @@ __all__ = [
     "observe_hardware",
     "observe_runtime",
     "resolve_capabilities",
+    "validate_assistant_proposal",
 ]
