@@ -10,7 +10,7 @@ _PENDING = None
 
 @PromptServer.instance.routes.get("/superior-mi/bridge/status")
 async def superior_mi_bridge_status(request):
-    return web.json_response({"ok": True, "bridge": "Superior-MI-Workstation-Bridge", "version": "1"})
+    return web.json_response({"ok": True, "bridge": "Superior-MI-Workstation-Bridge", "version": "2"})
 
 @PromptServer.instance.routes.post("/superior-mi/open-workflow")
 async def superior_mi_open_workflow(request):
