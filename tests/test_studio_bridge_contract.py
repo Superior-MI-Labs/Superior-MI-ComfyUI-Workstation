@@ -39,4 +39,37 @@ def test_bridge_retains_backend_workflow_handoff_routes():
     assert '"/superior-mi/open-workflow"' in source
     assert '"/superior-mi/pending-workflow"' in source
     assert '"/superior-mi/bridge/status"' in source
-    assert '"version": "2"' in source
+    assert '"version": "3"' in source
+
+
+
+def test_bridge_exposes_planning_but_no_browser_execution_authority():
+    backend = PY.read_text(encoding="utf-8")
+    frontend = JS.read_text(encoding="utf-8")
+
+    assert '"/superior-mi/core/status"' in backend
+    assert '"/superior-mi/assistant/propose"' in backend
+    assert '"/superior-mi/plan"' in backend
+    assert "_is_local_request" in backend
+
+    forbidden_backend_routes = (
+        "/superior-mi/execute",
+        "/superior-mi/install",
+        "/superior-mi/download",
+    )
+    assert not any(route in backend for route in forbidden_backend_routes)
+
+    assert '"/superior-mi/assistant/propose"' in frontend
+    assert '"/superior-mi/plan"' in frontend
+    assert "deriveGraphControls(app.graph)" in frontend
+    assert "writeLiveControlValue(" in frontend
+    assert "Apply selected changes" in frontend
+    assert "Build setup checklist" in frontend
+
+
+def test_home_is_not_placeholder_copy_anymore():
+    source = JS.read_text(encoding="utf-8")
+    assert "function renderHomePanel" in source
+    assert "Ask Workstation" in source
+    assert "Assistant provider" in source
+    assert "will live here" not in source
