@@ -6,6 +6,7 @@ import tempfile
 APP = Path(__file__).resolve().parents[1] / "app"
 sys.path.insert(0, str(APP))
 
+from adapters.comfy_cli import load_trusted_asset_registry
 from core.registry import load_capability_registry, load_implementation_registry
 
 
@@ -71,3 +72,35 @@ def test_registry_rejects_duplicate_identity():
             assert "unique" in str(exc)
         else:
             raise AssertionError("duplicate implementation identity was accepted")
+
+
+
+def test_production_r1_catalog_is_referentially_complete():
+    capabilities = load_capability_registry(ROOT / "catalog" / "r1" / "capabilities.json")
+    implementations = load_implementation_registry(ROOT / "catalog" / "r1" / "implementations.json")
+    assets = load_trusted_asset_registry(ROOT / "catalog" / "r1" / "assets.json")
+    preset_payload = json.loads((ROOT / "preset_library" / "index.json").read_text(encoding="utf-8"))
+    blueprint_ids = {entry["id"] for entry in preset_payload["presets"]}
+
+    capability_ids = set(capabilities.by_id())
+    assert implementations.entries
+
+    for candidate in implementations.entries:
+        assert set(candidate.capabilities) <= capability_ids
+        assert candidate.blueprint_id in blueprint_ids
+        assert candidate.min_vram_bytes == 0
+        assert candidate.recommended_vram_bytes > 0
+        for asset in candidate.assets:
+            assert asset.id in assets
+
+    assert all(asset.url.startswith("https://huggingface.co/") for asset in assets.values())
+
+
+def test_qwen_license_review_is_retained_in_production_catalog():
+    implementations = load_implementation_registry(ROOT / "catalog" / "r1" / "implementations.json")
+    qwen = [
+        candidate for candidate in implementations.entries
+        if candidate.id.startswith("qwen-image-2.1-convrot.")
+    ]
+    assert qwen
+    assert all(candidate.license_status == "acknowledgement" for candidate in qwen)
